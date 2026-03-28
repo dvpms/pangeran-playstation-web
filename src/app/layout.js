@@ -1,4 +1,5 @@
 import "./globals.css";
+import ReactQueryProvider from '../providers/ReactQueryProvider'
 
 export const metadata = {
   title: "Portal Web Pangeran Playstation",
@@ -14,7 +15,7 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet" />
       </head>
       <body className="font-sans bg-surface-0 text-text-on-surface min-h-full flex flex-col">
-        {children}
+        <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
     </html>
   );
