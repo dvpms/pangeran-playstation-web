@@ -1,26 +1,35 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand-primary: #00668a;
+  --brand-primary-100: #38bdf8;
+  --brand-gold: #ffc329;
+  --brand-gold-700: #795900;
+  --surface-0: #f5faff;
+  --surface-1: #eff4f9;
+  --surface-2: #eaeef3;
+  --surface-card: #ffffff;
+  --text-on-surface: #171c20;
+  --outline-variant: rgba(189,200,209,0.2);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.bg-surface-0 { background-color: var(--surface-0); }
+.text-text-on-surface { color: var(--text-on-surface); }
+
+/* Glass and shadow utilities */
+.glass {
+  background-color: rgba(255,255,255,0.8);
+  backdrop-filter: blur(12px);
+}
+.shadow-ethereal {
+  box-shadow: 0 24px 48px -12px rgba(0,102,138,0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Basic resets */
+html, body, #__next { height: 100%; }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+.font-sans { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto; }
+
+body { background: var(--surface-0); color: var(--text-on-surface); }
