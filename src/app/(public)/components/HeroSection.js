@@ -4,7 +4,7 @@ import { BsFillLightningChargeFill } from "react-icons/bs";
 
 export default function HeroSection() {
   return (
-    <section className="py-5 md:py-12 h-screen bg-primary-fixed/70">
+    <section className="py-5 md:py-12 h-screen bg-primary-fixed/20">
       <Container>
         <div className="grid gap-5
          md:gap-10 md:grid-cols-2 items-center">
@@ -26,7 +26,7 @@ export default function HeroSection() {
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold md:font-extrabold text-on-surface leading-tight mb-4">
               Rental PS4 &amp; TV, Langsung Antar ke{" "}
-              <span className="text-primary-container">Ruang Tamu Anda.</span>
+              <span className="text-primary">Ruang Tamu Anda.</span>
             </h1>
             <p className="text-sm md:text-base text-on-surface-variant mb-6 max-w-lg">
               Nikmati pengalaman gaming konsol premium tanpa ribet. Gratis
