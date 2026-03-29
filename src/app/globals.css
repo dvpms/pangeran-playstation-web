@@ -1,35 +1,39 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --brand-primary: #00668a;
-  --brand-primary-100: #38bdf8;
-  --brand-gold: #ffc329;
-  --brand-gold-700: #795900;
-  --surface-0: #f5faff;
-  --surface-1: #eff4f9;
-  --surface-2: #eaeef3;
-  --surface-card: #ffffff;
-  --text-on-surface: #171c20;
-  --outline-variant: rgba(189,200,209,0.2);
+@theme {
+  /* 1. COLORS */
+  --color-primary: #00668a;
+  --color-primary-container: #38bdf8;
+  --color-primary-fixed: #c4e7ff;
+
+  --color-secondary: #795900;
+  --color-secondary-container: #ffc329;
+  --color-secondary-on-container: #6f5100;
+
+  --color-tertiary: #855300;
+
+  --color-surface: #f5faff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4f9;
+  --color-surface-container: #eaeef3;
+  --color-surface-on: #171c20;
+
+  --color-outline-variant: #bdc8d1;
+
+  /* 2. TYPOGRAPHY */
+  --font-sans: var(--font-plus-jakarta), sans-serif;
+
+  /* 3. ELEVATION & DEPTH */
+  --shadow-ambient-blue: 0 24px 48px -12px rgba(0, 102, 138, 0.08);
+
+  /* 4. BORDER RADIUS */
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* 5. SIGNATURE TEXTURES */
+  --background-image-premium-glow: linear-gradient(
+    135deg,
+    #00668a 0%,
+    #38bdf8 100%
+  );
 }
-
-.bg-surface-0 { background-color: var(--surface-0); }
-.text-text-on-surface { color: var(--text-on-surface); }
-
-/* Glass and shadow utilities */
-.glass {
-  background-color: rgba(255,255,255,0.8);
-  backdrop-filter: blur(12px);
-}
-.shadow-ethereal {
-  box-shadow: 0 24px 48px -12px rgba(0,102,138,0.08);
-}
-
-/* Basic resets */
-html, body, #__next { height: 100%; }
-
-.font-sans { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto; }
-
-body { background: var(--surface-0); color: var(--text-on-surface); }
