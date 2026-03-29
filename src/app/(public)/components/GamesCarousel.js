@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import CatalogUnit from './CatalogUnit'
+import GamesCard from '@/components/ui/GamesCard'
 
 export default function GamesCarousel({ items = [] }) {
   const ref = useRef(null)
@@ -16,8 +16,8 @@ export default function GamesCarousel({ items = [] }) {
       <div className="overflow-hidden">
         <div ref={ref} className="flex gap-4 overflow-x-auto no-scrollbar py-4">
           {items.map((it, idx) => (
-            <div key={idx} className="min-w-[260px] w-[260px]">
-              <CatalogUnit title={it.title} subtitle={it.subtitle} price={it.price} image={it.image} />
+            <div key={idx} className="min-w-[220px] w-[220px]">
+              <GamesCard {...it} />
             </div>
           ))}
         </div>
