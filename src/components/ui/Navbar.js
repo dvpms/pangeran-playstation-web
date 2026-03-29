@@ -1,29 +1,51 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import Container from './Container'
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import Container from "./Container";
+import { BsFillLightningChargeFill } from "react-icons/bs";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
-    <nav className="w-full bg-surface text-on-surface border-b border-outline-variant">
+    <nav className="w-full bg-surface text-on-surface sticky top-0 left-0 z-100 shadow-md">
       <Container>
         <div className="flex items-center justify-between py-3">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/images/logo.png" alt="Pangeran" width={40} height={40} className="rounded-lg" />
-            <span className="font-extrabold tracking-tight">PANGERAN PLAYSTATION</span>
+            <Image
+              src="/images/logo.png"
+              alt="Pangeran"
+              width={50}
+              height={50}
+              className="rounded-lg"
+            />
+            <span className="font-bold hidden md:inline-block text-primary-container text-xl">
+              PANGERAN PLAYSTATION
+            </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="#area" className="text-sm hover:text-primary">Area</Link>
-            <Link href="#sk" className="text-sm hover:text-primary">S&amp;K</Link>
-            <Link href="#cara-pesan" className="text-sm hover:text-primary">Cara Pesan</Link>
-            <Link href="#booking" className="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-full font-bold text-sm">Booking</Link>
+          <div className="hidden md:flex items-center gap-8 text-sm font-semibold tracking-tight">
+            <Link href="#area" className="text-slate-600 text-sm hover:text-sky-500 transition-colors">
+              Area
+            </Link>
+            <Link href="#sk" className="text-slate-600 text-sm hover:text-sky-500 transition-colors">
+              S&amp;K
+            </Link>
+            <Link href="#cara-pesan" className="text-slate-600 text-sm hover:text-sky-500 transition-colors">
+              Cara Pesan
+            </Link>
           </div>
 
-          <div className="md:hidden">
+          <Link
+            href="#booking"
+            className="bg-secondary-container text-on-secondary-container px-6 py-2.5 rounded-full font-bold text-sm scale-95 active:scale-90 transition-transform shadow-lg shadow-secondary/20 w-auto"
+          >
+            <BsFillLightningChargeFill className="w-5 h-5 inline-block" /> Sewa
+          </Link>
+
+          {/* Mobile menu button */}
+          {/* <div className="md:hidden">
             <button
               aria-label="Toggle menu"
               className="p-2 rounded-md bg-surface-container-low"
@@ -33,11 +55,12 @@ export default function Navbar() {
                 <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-          </div>
+          </div> */}
         </div>
       </Container>
 
-      {open && (
+      {/* Mobile menu */}
+      {/* {open && (
         <div className="md:hidden border-t border-outline-variant bg-surface">
           <Container>
             <div className="flex flex-col gap-3 py-4">
@@ -48,7 +71,7 @@ export default function Navbar() {
             </div>
           </Container>
         </div>
-      )}
+      )} */}
     </nav>
-  )
+  );
 }
