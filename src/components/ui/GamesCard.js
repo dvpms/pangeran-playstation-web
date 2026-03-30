@@ -15,7 +15,7 @@ export default function GamesCard({
     <div
       className={`relative bg-surface-container rounded-4xl overflow-hidden transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-secondary-container/20 border border-transparent ${className}`}
     >
-      <div className="w-full h-52 md:h-100 relative hover:scale-105 transition-transform duration-300">
+      <div className="w-full h-68 md:h-100 relative hover:scale-105 transition-transform duration-300">
         {image ? (
           <Image
             src={image}
@@ -47,7 +47,7 @@ export default function GamesCard({
   );
 
   return (
-    <div className="w-42.5] md:min-w-75 snap-center group">
+    <div className="w-48 md:min-w-75 snap-center group">
       {href ? (
         <Link href={href} aria-label={title}>
           {CardInner}

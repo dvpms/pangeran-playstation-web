@@ -32,7 +32,6 @@ export default function HowTo() {
   return (
     <section
       className="md:16 md:py-24 bg-surface relative"
-      id="cara-pesan"
     >
       <Container>
         <div className="max-w-7xl mx-auto px-8">
