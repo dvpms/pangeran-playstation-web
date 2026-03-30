@@ -37,6 +37,7 @@ export default function HeroSection() {
               <Image
                 src="/images/ps4-setup.jpg"
                 alt="PS4 setup"
+                sizes=""
                 width={900}
                 height={600}
                 className="object-cover w-full h-full"

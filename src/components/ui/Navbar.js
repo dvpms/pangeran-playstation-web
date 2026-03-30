@@ -9,8 +9,7 @@ import { BsFillLightningChargeFill } from "react-icons/bs";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   return (
-    <nav className="w-full bg-surface text-on-surface sticky top-0 left-0 z-50 shadow-md py-3">
-      <Container>
+    <nav className="w-full bg-surface text-surface-on sticky top-0 left-0 z-50 shadow-md py-3 md:py-4 transition-all">      <Container>
         <div className="flex items-center justify-between ">
           <Link href="/" className="flex items-center gap-3">
             <Image

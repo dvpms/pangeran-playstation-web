@@ -42,6 +42,7 @@ export default function Footer() {
                   <Image
                     src="/images/logo.png"
                     alt="Pangeran Playstation Logo"
+                    sizes=" ( min-width: 768px ) 144px, 72px"
                     fill
                     className="rounded-xl shadow-ambient-blue object-cover"
                   />
@@ -105,7 +106,6 @@ export default function Footer() {
                     </a>
                   ))}
                 </div>
-
 
                 <a
                   href="https://wa.me/6285776172812"
