@@ -102,11 +102,11 @@ export default function Terms() {
         <div className="max-w-4xl mx-auto flex flex-col gap-12">
           {/* Header Section */}
           <div className="flex flex-col gap-6 relative">
-            <h2 className=" text-2xl md:text-5xl font-extrabold tracking-tight text-surface-on relative inline-block">
+            <h2 className="text-center md:text-left text-xl md:text-5xl font-extrabold tracking-tight text-surface-on relative inline-block">
               Syarat & Ketentuan Layanan
-              <div className="absolute -bottom-2 left-0 w-24 h-1.5 bg-secondary-container rounded-full"></div>
+              <div className="hidden md:block md:absolute -bottom-2 left-0 w-24 h-1.5 bg-secondary-container rounded-full"></div>
             </h2>
-            <p className="text-sm md:text-lg text-surface-on/80 leading-relaxed max-w-2xl">
+            <p className="text-center md:text-left text-sm md:text-lg text-surface-on/80 leading-relaxed max-w-2xl">
               Harap baca dengan saksama seluruh syarat dan ketentuan berikut
               sebelum Anda melanjutkan proses pemesanan.
             </p>
