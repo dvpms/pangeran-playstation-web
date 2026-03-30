@@ -16,6 +16,7 @@ export default function Navbar() {
             <Image
               src="/images/logo.png"
               alt="Pangeran"
+              loading="eager"
               width={50}
               height={50}
               className="rounded-lg"

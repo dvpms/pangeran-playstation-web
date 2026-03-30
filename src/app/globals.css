@@ -37,3 +37,13 @@
     #38bdf8 100%
   );
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Safari & Chrome */
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* Edge & IE */
+    scrollbar-width: none; /* Firefox */
+  }
+}

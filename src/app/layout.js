@@ -2,24 +2,26 @@ import "./globals.css";
 import ReactQueryProvider from "../providers/ReactQueryProvider";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../components/ui/Footer";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+// Konfigurasi font
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
 
 export const metadata = {
-  title: "Portal Web Pangeran Playstation",
-  description: "Landing & admin dashboard for PlayStation rental",
+  title: "Pangeran Playstation | Home Service Rental",
+  description:
+    "Rental PS4 dan TV di Tangerang, langsung antar ke ruang tamu Anda.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="font-sans bg-surface-0 text-text-on-surface min-h-full flex flex-col">
+      <body className={` ${plusJakarta.variable} bg-surface-0 text-text-on-surface min-h-full flex flex-col`}>
         <ReactQueryProvider>
           <Navbar />
           {children}
