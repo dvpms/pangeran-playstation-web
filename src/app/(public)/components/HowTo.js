@@ -38,7 +38,7 @@ export default function HowTo() {
           {/* Header Section */}
           <div className="text-center max-w-2xl mx-auto mb-5 md:mb-20">
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-surface-on mb-4">
-              Cara Sewa Mudah
+              Cara Booking Mudah
             </h2>
             <p className="text-surface-on/80 text-sm md:text-lg">
               Tanpa ribet, cukup selesaikan pemesanan melalui website kami.
