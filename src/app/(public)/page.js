@@ -22,12 +22,9 @@ export default function Page() {
     {
       title: "TV 40 Inch",
       label: "Add-on",
-      subtitle: "Smart TV 40 inch, cocok untuk pengalaman co-op.",
+      subtitle: "Smart TV 40 inch dengan resolusi Full HD",
       price: [
-        { duration: "12 Jam", cost: "60k" },
-        { duration: "1 Hari", cost: "105k" },
-        { duration: "2 Hari", cost: "150k" },
-        { duration: "3 Hari", cost: "245k" },
+        { duration: "Hanya", cost: "25k" },
       ],
       image: "/images/ps4-setup.jpg",
     },
@@ -73,7 +70,7 @@ export default function Page() {
       <main>
         <HeroSection />
 
-        <section className="py-5 md:py-14 bg-surface-container-low h-screen">
+        <section className="py-20 md:py-25 bg-surface-container-low ">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-extrabold mb-3">Unit Tersedia</h2>
             <p className="text-on-surface-variant mb-8">
@@ -87,13 +84,13 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="py-12 bg-surface h-screen">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl font-bold mb-2 font-sans">
+        <section className="py-20 md:py-25 bg-surface md:h-screen">
+          <div className="max-w-7xl mx-5 md:mx-auto">
+            <h2 className="text-xl md:text-4xl font-bold mb-2">
               Katalog Game Terkini
             </h2>
             <p className="text-on-surface-variant mb-2 max-w-lg font-light">
-              Mainkan game PS4 terpopuler dan tervaforite
+              Mainkan game PS4 terpopuler dan terfavorite
             </p>
           </div>
           <div className="mx-7">

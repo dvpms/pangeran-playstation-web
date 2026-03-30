@@ -6,20 +6,10 @@ export default function HeroSection() {
   return (
     <section className="py-5 md:py-12 h-screen bg-primary-fixed/20">
       <Container>
-        <div className="grid gap-5
-         md:gap-10 md:grid-cols-2 items-center">
-          <div className="relative">
-            <div className="absolute -right-6 -top-6 w-40 h-40 bg-primary-container/20 rounded-full blur-3xl"></div>
-            <div className="relative rounded-2xl overflow-hidden shadow-ethereal">
-              <Image
-                src="/images/ps4-setup.jpg"
-                alt="PS4 setup"
-                width={900}
-                height={600}
-                className="object-cover w-full h-full"
-              />
-            </div>
-          </div>
+        <div
+          className="grid gap-5
+         md:gap-10 md:grid-cols-2 items-center"
+        >
           <div>
             <span className="hidden md:inline-block px-3 py-1 rounded-full bg-primary-container text-on-primary text-xs font-bold uppercase tracking-widest mb-4">
               Premium Home Service
@@ -39,6 +29,18 @@ export default function HeroSection() {
               >
                 Sewa Sekarang
               </a>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -right-6 -top-6 w-40 h-40 bg-primary-container/20 rounded-full blur-3xl"></div>
+            <div className="relative rounded-2xl overflow-hidden shadow-ethereal">
+              <Image
+                src="/images/ps4-setup.jpg"
+                alt="PS4 setup"
+                width={900}
+                height={600}
+                className="object-cover w-full h-full"
+              />
             </div>
           </div>
         </div>
