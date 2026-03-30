@@ -97,61 +97,61 @@ export default function Terms() {
   ];
 
   return (
-    <section className="py-24 px-8 bg-surface" id="sk">
+    <section className="py-24 bg-surface" id="sk">
       <Container>
         <div className="max-w-4xl mx-auto flex flex-col gap-12">
           {/* Header Section */}
           <div className="flex flex-col gap-6 relative">
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-surface-on relative inline-block">
+            <h2 className=" text-2xl md:text-5xl font-extrabold tracking-tight text-surface-on relative inline-block">
               Syarat & Ketentuan Layanan
               <div className="absolute -bottom-2 left-0 w-24 h-1.5 bg-secondary-container rounded-full"></div>
             </h2>
-            <p className="text-lg text-surface-on/80 leading-relaxed max-w-2xl mt-4">
+            <p className="text-sm md:text-lg text-surface-on/80 leading-relaxed max-w-2xl">
               Harap baca dengan saksama seluruh syarat dan ketentuan berikut
               sebelum Anda melanjutkan proses pemesanan.
             </p>
           </div>
 
           {/* Aturan Cards Container */}
-          <div className="bg-surface-container-low rounded-[2rem] p-4 md:p-8 flex flex-col gap-8">
+          <div className="bg-surface-container-low rounded-4xl p-2 md:p-8 flex flex-col gap-8">
             {termsData.map((term) => (
               <div
                 key={term.id}
-                className="bg-surface-container-lowest rounded-xl p-8 shadow-ambient-blue relative overflow-hidden group"
+                className="bg-surface-container-lowest rounded-xl p-2 md:p-8 shadow-ambient-blue relative overflow-hidden group"
               >
                 {/* Dekorasi Latar Belakang Asimetris */}
                 <div
                   className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110 ${term.theme.decorator}`}
                 ></div>
 
-                <div className="flex flex-col md:flex-row gap-6 items-start relative z-10">
+                <div className="flex flex-col gap-4 items-start relative z-10">
                   {/* Ikon Kategori */}
                   <div
-                    className={`flex items-center justify-center rounded-2xl shrink-0 w-16 h-16 ${term.theme.container}`}
+                    className={`flex space-x-3 `}
                   >
-                    <span
-                      className="material-symbols-outlined text-3xl"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    <div
+                      className={`flex  w-12 h-12 material-symbols-outlined text-3xl items-center justify-center rounded-2xl shrink-0  ${term.theme.container}`}
+                      
                     >
                       {term.icon}
-                    </span>
+                    </div>
+                    <h3 className="text-lg md:text-2xl font-bold text-surface-on">
+                      {term.title}
+                    </h3>
                   </div>
 
                   {/* Daftar Aturan */}
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-2xl font-bold text-surface-on">
-                      {term.title}
-                    </h3>
-                    <ul className="flex flex-col gap-3 text-surface-on/80 leading-relaxed">
+                  <div className="flex flex-col gap-2">
+                    <ul className="flex flex-col gap-2 text-surface-on/80 leading-relaxed">
                       {term.rules.map((rule, index) => (
-                        <li key={index} className="flex gap-3">
+                        <li key={index} className="flex items-center gap-2">
                           <span
                             className={`material-symbols-outlined text-xl shrink-0 mt-0.5 ${term.theme.bullet}`}
                           >
                             {term.bulletIcon}
                           </span>
 
-                          <span>{rule}</span>
+                          <span className="p-2">{rule}</span>
                         </li>
                       ))}
                     </ul>
