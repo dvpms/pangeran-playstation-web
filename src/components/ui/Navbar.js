@@ -41,7 +41,7 @@ export default function Navbar() {
             href="#booking"
             className="bg-secondary-container text-on-secondary-container px-6 py-2.5 rounded-full font-bold text-sm scale-95 active:scale-90 transition-transform shadow-lg shadow-secondary/20 w-auto"
           >
-            <BsFillLightningChargeFill className="w-5 h-5 inline-block" /> Sewa
+            <BsFillLightningChargeFill className="w-5 h-5 inline-block" /> Book
           </Link>
 
           {/* Mobile menu button */}

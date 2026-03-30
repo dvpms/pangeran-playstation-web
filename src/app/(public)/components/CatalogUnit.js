@@ -60,7 +60,7 @@ export default function CatalogUnit({
           href="#booking"
           className="mt-6 block text-center py-3 rounded-xl bg-primary text-white font-bold"
         >
-          Sewa Sekarang
+          Booking Sekarang
         </a>
       </div>
     </article>
