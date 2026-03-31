@@ -20,6 +20,7 @@ export default function GamesCard({
           <Image
             src={image}
             alt={title}
+            loading="eager"
             sizes="(min-width: 768px) 300px, 170px"
             fill
             className="object-cover w-full h-full"
