@@ -5,6 +5,7 @@ import HowTo from "./components/HowTo";
 import Terms from "./components/Terms";
 import FinalCTA from "./components/FinalCTA";
 import CoverageArea from "./components/CoverageArea";
+import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
 
 export default function Page() {
   const items = [
@@ -124,6 +125,7 @@ export default function Page() {
         <HowTo />
         <Terms />
         <FinalCTA />
+        <WhatsAppFloatingButton />
     </>
   );
 }
