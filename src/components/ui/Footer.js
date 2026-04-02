@@ -87,7 +87,7 @@ export default function Footer() {
             </div>
 
             {/* Socials & Contact */}
-            <div className="flex flex-col gap-6 text-center md:text-left">
+            <div className="flex flex-col gap-6 text-center items-center md:text-left">
               <h4 className="text-sm font-bold text-surface-on uppercase tracking-widest">
                 Hubungi Kami
               </h4>
