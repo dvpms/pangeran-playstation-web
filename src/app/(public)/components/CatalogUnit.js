@@ -15,6 +15,7 @@ export default function CatalogUnit({
           <Image
             src={image}
             alt={title}
+            loading="lazy"
             width={800}
             height={600}
             className="object-cover w-full h-full"

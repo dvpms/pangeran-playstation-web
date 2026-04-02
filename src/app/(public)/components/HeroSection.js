@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Container from "@/components/ui/Container";
-import { BsFillLightningChargeFill } from "react-icons/bs";
 
 export default function HeroSection() {
   return (
