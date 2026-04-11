@@ -13,10 +13,10 @@ export default function Page() {
       title: "PS4 Slim",
       subtitle: "Termasuk 2 Stick, Kabel HDMI, Kabel Power",
       price: [
-        { duration: "12 Jam", cost: "60k" },
-        { duration: "1 Hari", cost: "105k" },
-        { duration: "2 Hari", cost: "150k" },
-        { duration: "3 Hari", cost: "245k" },
+        { duration: "12 Jam", cost: "75k" },
+        { duration: "1 Hari", cost: "115k" },
+        { duration: "2 Hari", cost: "225k" },
+        { duration: "3 Hari", cost: "330k" },
       ],
       image: "/images/ps4-slim1.png",
     },
@@ -25,7 +25,7 @@ export default function Page() {
       label: "Add-on",
       subtitle: "Smart TV 40 inch dengan resolusi Full HD",
       price: [
-        { duration: "Hanya", cost: "25k" },
+        { duration: "Hanya", cost: "49k" },
       ],
       image: "/images/tv-setup.png",
     },
