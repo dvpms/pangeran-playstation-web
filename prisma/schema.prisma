@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client"
+  output = "../prisma/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+
+}
+
+// 1. Katalog Produk (Yang tampil di UI)
+model Catalog {
+  id          String      @id @default(uuid())
+  name        String      // "PS4 Pro 4K", "Smart TV 40"
+  type        ItemType    // CONSOLE, ADDON
+  basePrice   Decimal     @db.Decimal(10, 2)
+  inventories Inventory[] // Relasi ke barang fisik nyata
+}
+
+// 2. Inventaris Fisik (Mesin/Unit yang sebenarnya)
+model Inventory {
+  id           String        @id @default(uuid())
+  catalogId    String
+  serialCode   String        @unique // Misal: "PS4-PRO-001"
+  status       ItemStatus    @default(AVAILABLE) // Bisa diset MAINTENANCE kalau rusak
+  
+  catalog      Catalog       @relation(fields: [catalogId], references: [id])
+  bookingItems BookingItem[]
+}
+
+// 3. Pesanan Pelanggan
+model Booking {
+  id             String        @id @default(uuid())
+  customerName   String?
+  whatsappNumber String
+  
+  // WAKTU SEWA (Krusial untuk fitur blokir kalender)
+  startDate      DateTime
+  endDate        DateTime
+  
+  deliveryArea   String
+  fullAddress    String        @db.Text
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  status         BookingStatus @default(PENDING)
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  items          BookingItem[]
+}
+
+// 4. Relasi Pesanan dan Mesin Fisik
+model BookingItem {
+  id          String    @id @default(uuid())
+  bookingId   String
+  inventoryId String    // Mengunci mesin SPESIFIK, bukan sekadar agregat
+  
+  booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+
+  @@unique([bookingId, inventoryId]) // 1 pesanan tidak bisa masukin mesin yang sama 2x
+}
+
+enum ItemType {
+  CONSOLE
+  ADDON
+}
+
+enum ItemStatus {
+  AVAILABLE
+  MAINTENANCE // Untuk memblokir unit yang sedang diservis
+  RETIRED     // Unit sudah dijual/rusak total
+}
+
+enum BookingStatus {
+  PENDING
+  WAITING_PAYMENT
+  CONFIRMED
+  ACTIVE      // Sedang dimainkan di rumah pelanggan
+  COMPLETED
+  CANCELLED
+}
