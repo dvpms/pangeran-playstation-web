@@ -50,7 +50,6 @@ export default async function BookingPage() {
           </p>
         </div>
 
-        {/* Lempar data nyata dari VPS ke Client Component */}
         <BookingForm initialConsoles={consolesPlain} initialAddons={addonsPlain} />
       </div>
     </div>
