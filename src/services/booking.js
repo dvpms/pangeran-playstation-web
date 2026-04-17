@@ -218,3 +218,31 @@ export async function submitBooking(payload) {
     };
   }
 }
+
+
+export async function getAllBookings() {
+  try {
+    return await prisma.booking.findMany({
+      include: {
+        tier: { include: { catalog: true } },
+        items: { include: { inventory: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (error) {
+    console.error("Gagal mengambil data booking:", error);
+    return [];
+  }
+}
+
+export async function updateBookingStatus(id, newStatus) {
+  try {
+    await prisma.booking.update({
+      where: { id },
+      data: { status: newStatus }
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}

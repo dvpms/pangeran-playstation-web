@@ -63,6 +63,23 @@ model BookingItem {
   @@unique([bookingId, inventoryId])
 }
 
+// Tambahkan di bagian bawah prisma/schema.prisma
+
+// 6. Manajemen Pengguna (Admin)
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  password  String   // Akan menyimpan password yang di-hash
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  OWNER
+}
+
 enum ItemType {
   CONSOLE
   ADDON

@@ -1,5 +1,6 @@
 // prisma/seed.js
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -83,7 +84,30 @@ async function main() {
         { catalogId: tv40.id, serialCode: "TV-001", status: "AVAILABLE" },
       ],
     });
+    // ... (Kode seed katalog dan inventory sebelumnya) ...
+
     console.log("✅ Inventaris fisik berhasil disuntikkan");
+
+    // =====================================
+    // 5. Buat Akun Admin Pertama
+    // =====================================
+    const hashedPassword = await bcrypt.hash("Pangeran123!", 10); // GANTI PASSWORD INI NANTI
+
+    // Cek apakah admin sudah ada agar tidak error duplikat jika di-seed ulang
+    const existingAdmin = await prisma.user.findUnique({
+      where: { email: "admin@pangeran.com" },
+    });
+    if (!existingAdmin) {
+      await prisma.user.create({
+        data: {
+          name: "Pangeran Owner",
+          email: "admin@pangeran.com", // Ini email untuk login
+          password: hashedPassword,
+          role: "OWNER",
+        },
+      });
+      console.log("✅ Akun Admin berhasil dibuat (email: admin@pangeran.com)");
+    }
   } catch (error) {
     console.error("❌ Error saat proses seeding:", error);
     process.exit(1);
