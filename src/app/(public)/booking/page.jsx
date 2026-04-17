@@ -1,5 +1,5 @@
+// src/app/(public)/booking/page.jsx
 import { prisma } from "@/lib/prisma";
-
 import BookingForm from "@/components/ui/BookingForm";
 
 export const metadata = {
@@ -7,16 +7,35 @@ export const metadata = {
 };
 
 export default async function BookingPage() {
-  const catalogs = await prisma.catalog.findMany({
-    orderBy: { basePrice: "desc" },
-  });
-  const catalogsPlain = catalogs.map((item) => ({
-    ...item,
-    basePrice: item.basePrice.toString(), // atau Number(item.basePrice)
-  }));
+  // Ambil data konsol beserta paket harganya
 
-  const consoles = catalogsPlain.filter((item) => item.type === "CONSOLE");
-  const addons = catalogsPlain.filter((item) => item.type === "ADDON");
+  function serializeDecimal(obj) {
+  return JSON.parse(JSON.stringify(obj, (key, value) =>
+    typeof value === 'object' && value !== null && value.constructor.name === 'Decimal'
+      ? value.toString()
+      : value
+  ));
+}
+
+  const consoles = await prisma.catalog.findMany({
+    where: { type: "CONSOLE" },
+    include: {
+      tiers: {
+        orderBy: { price: "asc" }, // Urutkan dari paket termurah (12 Jam)
+      },
+    },
+  });
+
+  // Ambil data addon (TV) beserta harganya
+  const addons = await prisma.catalog.findMany({
+    where: { type: "ADDON" },
+    include: {
+      tiers: true,
+    },
+  });
+
+  const consolesPlain = serializeDecimal(consoles);
+  const addonsPlain = serializeDecimal(addons);
 
   return (
     <div className="min-h-screen bg-surface pt-12 pb-24">
@@ -31,8 +50,8 @@ export default async function BookingPage() {
           </p>
         </div>
 
-        {/* Melempar data database sebagai props ke Client Component */}
-        <BookingForm initialConsoles={consoles} initialAddons={addons} />
+        {/* Lempar data nyata dari VPS ke Client Component */}
+        <BookingForm initialConsoles={consolesPlain} initialAddons={addonsPlain} />
       </div>
     </div>
   );
