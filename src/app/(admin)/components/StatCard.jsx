@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from 'react';
 
 export default function StatCard({
@@ -72,11 +74,6 @@ export default function StatCard({
                 : 'text-primary'
             }`}
           >
-            {subtitle.icon && (
-              <span className="material-symbols-outlined text-[16px]">
-                {subtitle.icon}
-              </span>
-            )}
             <span>{subtitle.text}</span>
           </div>
 

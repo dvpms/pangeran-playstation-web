@@ -219,16 +219,43 @@ export async function submitBooking(payload) {
   }
 }
 
-
 export async function getAllBookings() {
   try {
-    return await prisma.booking.findMany({
+    const bookings = await prisma.booking.findMany({
       include: {
         tier: { include: { catalog: true } },
-        items: { include: { inventory: true } }
+        items: { include: { inventory: true } },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
+
+    // Convert Decimal objects to numbers for Client Component serialization
+    return bookings.map((booking) => ({
+      ...booking,
+      totalPrice: booking.totalPrice ? Number(booking.totalPrice) : 0,
+      tier: booking.tier
+        ? {
+            ...booking.tier,
+            price: booking.tier.price ? Number(booking.tier.price) : 0,
+            oldPrice: booking.tier.oldPrice ? Number(booking.tier.oldPrice) : 0, // Tambahkan baris ini!
+            discount: booking.tier.discount ? Number(booking.tier.discount) : 0,
+            catalog: booking.tier.catalog ? { ...booking.tier.catalog } : null,
+          }
+        : null,
+      items: booking.items
+        ? booking.items.map((item) => ({
+            ...item,
+            inventory: item.inventory
+              ? {
+                  ...item.inventory,
+                  dailyRate: item.inventory.dailyRate
+                    ? Number(item.inventory.dailyRate)
+                    : 0,
+                }
+              : null,
+          }))
+        : [],
+    }));
   } catch (error) {
     console.error("Gagal mengambil data booking:", error);
     return [];
@@ -239,7 +266,7 @@ export async function updateBookingStatus(id, newStatus) {
   try {
     await prisma.booking.update({
       where: { id },
-      data: { status: newStatus }
+      data: { status: newStatus },
     });
     return { success: true };
   } catch (error) {

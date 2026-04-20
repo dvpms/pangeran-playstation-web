@@ -1,54 +1,110 @@
-'use client';
+"use client";
 
-import { MdFilterList, MdMoreVert } from 'react-icons/md';
+import { MdFilterList, MdMoreVert, MdWhatsapp, MdCheck, MdClose } from "react-icons/md";
+import { useState } from "react";
+import { updateBookingStatus } from "@/services/booking";
 
-export default function BookingTable({ bookings = [] }) {
+export default function BookingTable({ bookings: initialBookings = [] }) {
+  const [bookings, setBookings] = useState(initialBookings);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Map database status to UI status
+  const mapStatus = (dbStatus) => {
+    const statusMap = {
+      PENDING: "pending",
+      WAITING_PAYMENT: "pending",
+      CONFIRMED: "on-delivery",
+      ACTIVE: "active",
+      COMPLETED: "completed",
+      CANCELLED: "cancelled",
+    };
+    return statusMap[dbStatus] || "pending";
+  };
+
+  // Status options for dropdown
+  const statusOptions = [
+    { db: "PENDING", label: "Menunggu Verifikasi", ui: "pending" },
+    { db: "WAITING_PAYMENT", label: "Menunggu Pembayaran", ui: "pending" },
+    { db: "CONFIRMED", label: "Siap Kirim", ui: "on-delivery" },
+    { db: "ACTIVE", label: "Rental Aktif", ui: "active" },
+    { db: "COMPLETED", label: "Selesai", ui: "completed" },
+    { db: "CANCELLED", label: "Dibatalkan", ui: "cancelled" },
+  ];
+
+  // Handle status update
+  const handleStatusUpdate = async (bookingId, currentStatus, newStatus) => {
+    setIsUpdating(true);
+    try {
+      const result = await updateBookingStatus(bookingId, newStatus);
+      if (result.success) {
+        // Update local state
+        setBookings(bookings.map(b => 
+          b.id === bookingId ? { ...b, status: newStatus } : b
+        ));
+        setSelectedBookingId(null);
+      } else {
+        alert("Gagal mengubah status: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("Terjadi kesalahan saat mengubah status");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Map database status to readable label
+  const getStatusLabel = (dbStatus) => {
+    const labelMap = {
+      PENDING: "Menunggu Verifikasi",
+      WAITING_PAYMENT: "Menunggu Pembayaran",
+      CONFIRMED: "Siap Kirim",
+      ACTIVE: "Rental Aktif",
+      COMPLETED: "Selesai",
+      CANCELLED: "Dibatalkan",
+    };
+    return labelMap[dbStatus] || dbStatus;
+  };
+
+  // Calculate duration in days
+  const calculateDuration = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    return days === 1 ? "1 Hari" : `${days} Hari`;
+  };
+
+  // Transform real booking data to table format
+  const transformedBookings = bookings.map((booking) => ({
+    id: booking.id,
+    customer: {
+      name: booking.customerName,
+      avatar: booking.customerName.charAt(0).toUpperCase(),
+    },
+    unit: booking.tier?.catalog?.name || "N/A",
+    duration: booking.tier?.label || calculateDuration(booking.startDate, booking.endDate) || "N/A",
+    area: booking.deliveryArea,
+    whatsappNumber: booking.whatsappNumber,
+    status: mapStatus(booking.status),
+    dbStatus: booking.status,
+    statusLabel: getStatusLabel(booking.status),
+  }));
+
   const getStatusBadgeColor = (status) => {
     const statusConfig = {
-      pending: 'bg-secondary-container text-on-secondary-container',
-      'on-delivery':
-        'bg-primary-container/20 text-primary',
-      completed:
-        'bg-surface-container-highest text-on-surface-variant',
-      active:
-        'bg-primary-container/20 text-primary',
-      cancelled:
-        'bg-error/20 text-error',
+      pending: "bg-secondary-container text-on-secondary-container",
+      "on-delivery": "bg-primary-container/20 text-primary",
+      completed: "bg-surface-container-highest text-on-surface-variant",
+      active: "bg-primary-container/20 text-primary",
+      cancelled: "bg-error/20 text-error",
     };
     return statusConfig[status] || statusConfig.pending;
   };
 
-  const sampleData = [
-    {
-      id: 1,
-      customer: { name: 'Ahmad Fauzi', avatar: 'A' },
-      unit: 'PS5 Pro',
-      duration: '2 Days',
-      area: 'Jakarta Selatan',
-      status: 'pending',
-      statusLabel: 'Pending',
-    },
-    {
-      id: 2,
-      customer: { name: 'Budi Santoso', avatar: 'B' },
-      unit: 'PS4 Slim',
-      duration: '1 Week',
-      area: 'Bandung',
-      status: 'on-delivery',
-      statusLabel: 'On Delivery',
-    },
-    {
-      id: 3,
-      customer: { name: 'Citra Dewi', avatar: 'C' },
-      unit: 'PS5 Standard',
-      duration: '3 Days',
-      area: 'Surabaya',
-      status: 'completed',
-      statusLabel: 'Completed',
-    },
-  ];
+  
 
-  const displayData = bookings.length > 0 ? bookings : sampleData;
+  const displayData = transformedBookings;
 
   return (
     <div className="bg-surface-container-lowest rounded-xl p-8 overflow-hidden">
@@ -57,15 +113,7 @@ export default function BookingTable({ bookings = [] }) {
         <h2 className="text-headline-lg font-bold text-on-surface">
           Recent Bookings
         </h2>
-        <div className="flex gap-3">
-          <button className="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-medium text-sm hover:bg-surface-container-high transition-colors flex items-center gap-2">
-            <MdFilterList size={18} />
-            Filter
-          </button>
-          <button className="px-4 py-2 rounded-lg bg-primary-fixed text-on-primary-fixed-variant font-medium text-sm hover:opacity-90 transition-colors">
-            View All
-          </button>
-        </div>
+        
       </div>
 
       {/* Table */}
@@ -77,6 +125,7 @@ export default function BookingTable({ bookings = [] }) {
               <th className="py-4 px-4 font-medium">Unit</th>
               <th className="py-4 px-4 font-medium">Duration</th>
               <th className="py-4 px-4 font-medium">Delivery Area</th>
+              <th className="py-4 px-4 font-medium">Whatsapp</th>
               <th className="py-4 px-4 font-medium">Status</th>
               <th className="py-4 px-4 font-medium text-right">Actions</th>
             </tr>
@@ -114,23 +163,59 @@ export default function BookingTable({ bookings = [] }) {
                   {booking.area}
                 </td>
 
+                {/* whatsapp */}
+                <td className="py-4 px-4">
+                  <a
+                    href={`https://wa.me/${booking.whatsappNumber}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-500 hover:text-green-700"
+                  >
+                    <MdWhatsapp size={20} />
+                  </a>
+                </td>
+
                 {/* Status */}
                 <td className="py-4 px-4">
                   <span
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${getStatusBadgeColor(
-                      booking.status
+                      booking.status,
                     )}`}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
                     {booking.statusLabel}
                   </span>
                 </td>
 
                 {/* Actions */}
                 <td className="py-4 px-4 text-right">
-                  <button className="text-primary hover:text-primary-container p-2 rounded-lg hover:bg-surface-container transition-colors">
-                    <MdMoreVert size={20} />
-                  </button>
+                  <div className="relative group inline-block">
+                    <button className="text-primary hover:text-primary-container p-2 rounded-lg hover:bg-surface-container transition-colors">
+                      <MdMoreVert size={20} />
+                    </button>
+                    
+                    {/* Dropdown Menu */}
+                    <div className="absolute right-0 mt-2 w-56 bg-surface-container rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      <div className="p-3 border-b border-surface-container-high">
+                        <p className="text-xs font-medium text-on-surface-variant uppercase">Ubah Status</p>
+                      </div>
+                      
+                      <div className="max-h-48 overflow-y-auto">
+                        {statusOptions
+                          .filter(opt => opt.db !== booking.dbStatus)
+                          .map((option) => (
+                            <button
+                              key={option.db}
+                              onClick={() => handleStatusUpdate(booking.id, booking.dbStatus, option.db)}
+                              disabled={isUpdating}
+                              className="w-full text-left px-4 py-2.5 hover:bg-surface-container-high transition-colors text-sm text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <span className="text-xs text-on-surface-variant">{option.db}</span>
+                              <div className="font-medium">{option.label}</div>
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ))}

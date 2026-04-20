@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { MdSearch, MdNotificationsActive, MdApps } from 'react-icons/md';
 
@@ -42,10 +43,12 @@ export default function TopBar() {
 
         {/* Profile */}
         <button className="flex items-center gap-3">
-          <img
+          <Image
             alt="Administrator"
             className="w-9 h-9 rounded-full object-cover ring-2 ring-surface-container"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzfjg46EPIw9SPqa5xPa8LByWTbWdNmMwi-658ASGwn7QwJBuNC-0pHRCrYcnGb2BAUkKYbVQC5Rxu5BUAia9r4oc4TvF8xMrMM8djT5XBYH6hqP-vRaUUPWJNydl7ceYnHauiCSdWSfVNO4yuYoAaY7IYgACMDai2zabcNtyXjRjBVCel2gIhJHpdKt1sn1RECaxjLdECWoT3AYlVhlNYk7ZNsDvBgV4MJErRfM1yNw3cvm2OyPhNsFFmpuz_lJ282kSj1YOnhlfq"
+            src="/images/logo.png"
+            width={100}
+            height={100}
           />
         </button>
       </div>

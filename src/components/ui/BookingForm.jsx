@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { BiCalendar } from "react-icons/bi";
-import { FaReceipt, FaTv } from "react-icons/fa";
+import { FaReceipt, FaSpinner, FaTv } from "react-icons/fa";
 import { GiConsoleController } from "react-icons/gi";
 import { IoMdTime } from "react-icons/io";
 import Select from "react-select";
@@ -406,7 +406,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
 
       {/* Kolom Kanan: Ringkasan Pesanan (Sidebar) */}
       <div className="lg:col-span-4">
-        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-[2rem] p-6 md:p-8 sticky top-24 shadow-ambient-blue">
+        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-4xl p-6 md:p-8 sticky top-24 shadow-ambient-blue">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-surface-on">
               Ringkasan Pesanan
@@ -469,9 +469,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
           >
             {isSubmitting ? (
               <>
-                <span className="animate-spin material-symbols-outlined">
-                  progress_activity
-                </span>
+               <FaSpinner className="animate-spin text-primary" />
                 Memproses...
               </>
             ) : (
