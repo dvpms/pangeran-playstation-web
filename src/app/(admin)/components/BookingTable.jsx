@@ -261,8 +261,8 @@ Berikut detail pesanan Anda:
             </h2>
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto -mx-4 md:mx-0">
+          {/* DESKTOP TABLE VIEW (Hidden on mobile) */}
+          <div className="hidden md:block overflow-x-auto -mx-8 md:mx-0">
             <table className="w-full text-left border-collapse text-xs md:text-sm">
               <thead>
                 <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-xs md:text-sm">
@@ -393,11 +393,11 @@ Berikut detail pesanan Anda:
                         {selectedBookingId === booking.id &&
                           showStatusModal && (
                             <div
-                              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
                               onClick={() => setShowStatusModal(false)}
                             >
                               <div
-                                className="bg-surface-container-lowest rounded-2xl p-6 w-96 shadow-lg"
+                                className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-lg"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <h3 className="text-headline-sm font-bold text-on-surface mb-4">
@@ -447,6 +447,176 @@ Berikut detail pesanan Anda:
                 })}
               </tbody>
             </table>
+            </div>
+
+          {/* MOBILE CARD VIEW (Hidden on desktop) */}
+          <div className="md:hidden space-y-3">
+            {displayData.map((booking) => (
+              <div
+                key={booking.id}
+                className="group relative overflow-hidden rounded-2xl border border-outline-variant/70 bg-linear-to-br from-surface-container-lowest via-surface-container-low to-surface-container shadow-ambient-blue ring-1 ring-primary/10 backdrop-blur-sm transition-all duration-300 active:scale-[0.99]"
+              >
+                <div className="absolute inset-x-0 top-0 h-1 bg-premium-glow opacity-90" />
+
+                {/* Card Header - Customer Info */}
+                <div className="relative flex items-center justify-between mb-3 p-4 pb-0">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-primary-container/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-primary/15 shadow-sm shadow-primary/10">
+                      {booking.customer.avatar}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-on-surface truncate">
+                        {booking.customer.name}
+                      </p>
+                      <p className="text-xs text-on-surface-variant truncate">
+                        {booking.customer.phone || booking.whatsappNumber}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ml-2 shadow-sm ${getStatusBadgeColor(
+                      booking.status,
+                    )}`}
+                  >
+                    {booking.statusLabel}
+                  </span>
+                </div>
+
+                {/* Card Body - Booking Details */}
+                <div className="mx-4 mt-4 space-y-2 rounded-2xl border border-outline-variant/40 bg-surface-container-high/55 p-3 shadow-inner">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-xs text-on-surface-variant">Unit</p>
+                      <p className="text-sm font-semibold text-on-surface">
+                        {booking.unit}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-on-surface-variant">TV</p>
+                      <p className="text-sm font-semibold text-on-surface">
+                        {booking.tv ? "Ya" : "Tidak"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-xs text-on-surface-variant">Tanggal</p>
+                      <p className="text-xs text-on-surface">{booking.date}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-on-surface-variant">Duration</p>
+                      <p className="text-xs text-on-surface font-semibold">
+                        {booking.duration}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-on-surface-variant mb-1">Area</p>
+                    <p className="text-xs text-on-surface">{booking.area}</p>
+                  </div>
+                </div>
+
+                {/* Card Footer - Actions */}
+                <div className="relative mx-4 mt-4 mb-4 flex items-center justify-end gap-2 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest/80 px-3 py-2 shadow-[0_12px_30px_-18px_rgba(0,102,138,0.45)]">
+                  {/* WhatsApp Button */}
+                  <a
+                    href={`https://wa.me/${booking.whatsappNumber}?text=${encodeURIComponent(
+                      generateGreetingMessage({
+                        customerName: booking.customer.name,
+                        tier: booking.unit,
+                        addonTv: booking.tv,
+                        date: booking.date,
+                        duration: booking.duration,
+                        area: booking.area,
+                      }),
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-xl text-green-500 hover:text-green-700 hover:bg-green-500/10 transition-colors shadow-sm"
+                    title="Hubungi via WhatsApp"
+                  >
+                    <MdWhatsapp size={18} />
+                  </a>
+
+                  {/* Edit Status Button */}
+                  <button
+                    onClick={() => {
+                      setSelectedBookingId(booking.id);
+                      setShowStatusModal(true);
+                    }}
+                    className="p-2 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors shadow-sm"
+                    title="Update Status"
+                    disabled={isUpdating}
+                  >
+                    <MdEdit size={18} />
+                  </button>
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDeleteBooking(booking.id)}
+                    className="p-2 rounded-xl text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors shadow-sm"
+                    title="Delete Booking"
+                    disabled={isUpdating}
+                  >
+                    <MdDelete size={18} />
+                  </button>
+                </div>
+
+                {/* Status Update Modal */}
+                {selectedBookingId === booking.id && showStatusModal && (
+                  <div
+                    className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+                    onClick={() => setShowStatusModal(false)}
+                  >
+                    <div
+                      className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <h3 className="text-headline-sm font-bold text-on-surface mb-4">
+                        Ubah Status Booking
+                      </h3>
+                      <p className="text-sm text-on-surface-variant mb-4">
+                        Pilih status baru untuk booking ini:
+                      </p>
+
+                      <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
+                        {statusOptions
+                          .filter(
+                            (opt) => opt.db !== booking.dbStatus,
+                          )
+                          .map((option) => (
+                            <button
+                              key={option.db}
+                              onClick={() =>
+                                handleStatusUpdate(
+                                  booking.id,
+                                  booking.dbStatus,
+                                  option.db,
+                                )
+                              }
+                              disabled={isUpdating}
+                              className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <div className="font-medium text-sm">
+                                {option.label}
+                              </div>
+                            </button>
+                          ))}
+                      </div>
+
+                      <button
+                        onClick={() => setShowStatusModal(false)}
+                        className="w-full px-4 py-2 rounded-lg border border-surface-container-high hover:bg-surface-container transition-colors text-on-surface font-medium"
+                      >
+                        Batal
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
