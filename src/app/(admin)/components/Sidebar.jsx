@@ -12,7 +12,9 @@ import {
   MdSettings,
   MdHelp,
   MdAddCircle,
+  MdLogout,
 } from "react-icons/md";
+import Swal from "sweetalert2";
 
 const iconMap = {
   dashboard: MdDashboard,
@@ -43,6 +45,33 @@ export default function Sidebar() {
 
   const isActive = (href) =>
     pathname === href || pathname.startsWith(href + "/");
+
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "Logout?",
+      text: "Apakah Anda yakin ingin logout dari akun admin?",
+      showCancelButton: true,
+      confirmButtonText: "Logout",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Logout error:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: "Gagal logout. Silakan coba lagi.",
+        });
+      }
+    }
+  };
 
   return (
     <aside className="h-screen w-72 fixed left-0 top-0 z-50 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-xl flex flex-col p-6 gap-y-4 shadow-ambient-blue hidden md:flex">
@@ -116,7 +145,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer Menu */}
-      <div className="mt-auto space-y-2 pt-6">
+      <div className="mt-auto space-y-2 pt-6 border-t border-slate-200 dark:border-slate-700">
         {footerItems.map((item) => {
           const active = isActive(item.href);
           const IconComponent = iconMap[item.icon];
@@ -135,6 +164,16 @@ export default function Sidebar() {
             </Link>
           );
         })}
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-2 rounded-xl font-['Plus_Jakarta_Sans'] font-medium tracking-tight transition-all duration-200 active:scale-[0.97] text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30"
+          title="Logout dari akun admin"
+        >
+          <MdLogout size={24} />
+          <span>Logout</span>
+        </button>
       </div>
     </aside>
   );
