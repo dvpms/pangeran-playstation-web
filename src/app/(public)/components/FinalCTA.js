@@ -43,7 +43,7 @@ export default function FinalCta() {
               className="inline-flex items-center justify-center gap-3 mx-auto bg-secondary-container text-secondary-on-container px-5 md:px-12 py-4 md:py-5 rounded-xl font-extrabold text-lg md:text-xl shadow-ambient-blue hover:scale-105 transition-transform"
             >
               Booking Online
-              <span className="material-symbols-outlined font-extrabold">
+              <span className=" material-symbols-outlined font-extrabold">
                 <MdArrowForward width={15} height={15}/>
               </span>
             </Link>

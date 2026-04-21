@@ -60,7 +60,7 @@ export default function CoverageArea() {
                 <h4 className="text-xs font-extrabold text-surface-on/60 uppercase tracking-[0.2em] mb-4 text-center ">
                   Service Area
                 </h4>
-                <StaggerContainer staggerDelay={0.1} duration={0.4} className="grid grid-cols-2 gap-2 text-center">
+                <StaggerContainer staggerDelay={0.1} duration={0.4} className="grid grid-cols-2 gap-2 text-center space-y-4">
                   {serviceAreas.map((area) => (
                     <span
                       key={area}

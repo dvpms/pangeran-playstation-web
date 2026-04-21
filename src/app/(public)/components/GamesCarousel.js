@@ -1,16 +1,50 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import GamesCard from "@/components/ui/GamesCard";
 import { HoverScale } from "@/components/animations";
+import { motion } from "framer-motion";
 
 export default function GamesCarousel({ items = [] }) {
   const ref = useRef(null);
+  const [canScroll, setCanScroll] = useState(false);
 
-  function scroll(amount) {
-    if (!ref.current) return;
-    ref.current.scrollBy({ left: amount, behavior: "smooth" });
-  }
+  // Check if carousel can scroll
+  useEffect(() => {
+    const checkScroll = () => {
+      if (ref.current) {
+        const hasScroll = ref.current.scrollWidth > ref.current.clientWidth;
+        setCanScroll(hasScroll);
+      }
+    };
+
+    checkScroll();
+    window.addEventListener("resize", checkScroll);
+    return () => window.removeEventListener("resize", checkScroll);
+  }, [items]);
+
+  // Auto-scroll animation
+  useEffect(() => {
+    if (!ref.current || !canScroll) return;
+
+    const scrollContainer = ref.current;
+    const scrollWidth = scrollContainer.scrollWidth;
+    const clientWidth = scrollContainer.clientWidth;
+    const scrollDistance = scrollWidth - clientWidth;
+
+    const scroll = () => {
+      scrollContainer.scrollBy({ left: 1, behavior: "auto" });
+
+      // Reset to start when reaches end
+      if (scrollContainer.scrollLeft >= scrollDistance - 10) {
+        scrollContainer.scrollLeft = 0;
+      }
+    };
+
+    const interval = setInterval(scroll, 30); // Smooth scroll
+
+    return () => clearInterval(interval);
+  }, [canScroll]);
 
   return (
     <div className="relative">
