@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Container from "./Container";
 import { BsFillLightningChargeFill } from "react-icons/bs";
+import { motion } from "framer-motion";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -37,12 +38,21 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <Link
-            href="booking"
-            className="bg-secondary-container text-on-secondary-container px-6 py-2.5 rounded-full font-bold text-sm scale-95 active:scale-90 transition-transform shadow-lg shadow-secondary/20 w-auto"
+          <motion.div
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{
+              duration: 0.6,
+              repeat: Infinity,
+              repeatDelay: 0.2,
+            }}
           >
-            <BsFillLightningChargeFill className="w-5 h-5 inline-block" /> Book
-          </Link>
+            <Link
+              href="booking"
+              className=" bg-secondary-container text-on-secondary-container px-6 py-2.5 rounded-full font-bold text-sm scale-95 active:scale-90 transition-transform shadow-lg shadow-secondary/20 w-auto inline-block"
+            >
+              <BsFillLightningChargeFill className="w-5 h-5 inline-block" /> Book
+            </Link>
+          </motion.div>
 
           {/* Mobile menu button */}
           {/* <div className="md:hidden">

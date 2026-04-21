@@ -6,6 +6,7 @@ import Terms from "./components/Terms";
 import FinalCTA from "./components/FinalCTA";
 import CoverageArea from "./components/CoverageArea";
 import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
+import { ScrollReveal, StaggerContainer } from "@/components/animations";
 
 export default function Page() {
   const items = [
@@ -95,26 +96,30 @@ export default function Page() {
 
         <section className="py-20 md:py-25 bg-surface-container-low ">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl font-extrabold mb-3">Unit Tersedia</h2>
-            <p className="text-on-surface-variant mb-8">
-              Unit terawat, update game terbaru, dan siap pakai.
-            </p>
-            <div className="grid md:grid-cols-2 gap-8">
+            <ScrollReveal animation="fadeInUp" duration={0.6}>
+              <h2 className="text-3xl font-extrabold mb-3">Unit Tersedia</h2>
+              <p className="text-on-surface-variant mb-8">
+                Unit terawat, update game terbaru, dan siap pakai.
+              </p>
+            </ScrollReveal>
+            <StaggerContainer staggerDelay={0.15} duration={0.5} className="grid md:grid-cols-2 gap-8">
               {items.map((item) => (
                 <CatalogUnit key={item.title} {...item} />
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
         <section className="py-20 md:py-25 bg-surface md:h-screen">
           <div className="max-w-7xl mx-5 md:mx-auto">
-            <h2 className="text-xl md:text-4xl font-bold mb-2">
-              Katalog Game Terkini
-            </h2>
-            <p className="text-on-surface-variant mb-2 max-w-lg font-light">
-              Mainkan game PS4 terpopuler dan terfavorite
-            </p>
+            <ScrollReveal animation="fadeInLeft" duration={0.6}>
+              <h2 className="text-xl md:text-4xl font-bold mb-2">
+                Katalog Game Terkini
+              </h2>
+              <p className="text-on-surface-variant mb-2 max-w-lg font-light">
+                Mainkan game PS4 terpopuler dan terfavorite
+              </p>
+            </ScrollReveal>
           </div>
           <div className="mx-7">
             <GamesCarousel items={games} />
