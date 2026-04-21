@@ -11,6 +11,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 
 import { getUnavailableDates, submitBooking } from "@/services/booking";
 import Image from "next/image";
+import Swal from "sweetalert2";
 
 export default function BookingForm({ initialConsoles, initialAddons }) {
   const defaultConsole = initialConsoles.length > 0 ? initialConsoles[0] : null;
@@ -130,20 +131,30 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         // setAddress("");
 
         console.log("Booking berhasil dibuat:", result.booking);
-        alert(
-          "Booking berhasil dibuat! Silakan cek WhatsApp untuk konfirmasi lebih lanjut.",
-        );
+        Swal.fire({
+          icon: 'success',
+          title: 'Sukses!',
+          text: 'Booking berhasil dibuat! Silakan cek WhatsApp untuk konfirmasi lebih lanjut.',
+        });
       } else {
-        alert(result.message); // Tampilkan error jika unit direbut orang lain
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: result.message || 'Terjadi kesalahan saat membuat booking.',
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan jaringan.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Terjadi kesalahan jaringan.',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
       {/* Kolom Kiri: Form Input */}

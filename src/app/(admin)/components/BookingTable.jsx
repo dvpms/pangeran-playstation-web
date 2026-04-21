@@ -3,6 +3,7 @@
 import { MdFilterList, MdMoreVert, MdWhatsapp, MdCheck, MdClose, MdEdit, MdDelete, MdRefresh } from "react-icons/md";
 import { useState } from "react";
 import { updateBookingStatus, deleteBooking } from "@/services/booking";
+import Swal from "sweetalert2";
 
 export default function BookingTable({ bookings: initialBookings = [] }) {
   const [bookings, setBookings] = useState(initialBookings);
@@ -10,6 +11,8 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Map database status to UI status
   const mapStatus = (dbStatus) => {
@@ -47,11 +50,19 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
         setSelectedBookingId(null);
         setShowStatusModal(false);
       } else {
-        alert("Gagal mengubah status: " + result.error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Gagal mengubah status: ' + result.error,
+        });
       }
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("Terjadi kesalahan saat mengubah status");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Terjadi kesalahan saat mengubah status',
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -69,13 +80,26 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
       if (result.success) {
         // Remove from local state
         setBookings(bookings.filter(b => b.id !== bookingId));
-        alert("Booking berhasil dihapus");
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Booking berhasil dihapus.',
+        });
+
       } else {
-        alert("Gagal menghapus booking: " + result.error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Gagal menghapus booking: ' + result.error,
+        });
       }
     } catch (error) {
       console.error("Error deleting booking:", error);
-      alert("Terjadi kesalahan saat menghapus booking");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Terjadi kesalahan saat menghapus booking',
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -129,22 +153,80 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
     return statusConfig[status] || statusConfig.pending;
   };
 
-  
+  // Filter bookings based on status and search
+  const filteredBookings = transformedBookings.filter((booking) => {
+    // If there's a search query, prioritize search results (ignore status filter)
+    if (searchQuery.trim() !== '') {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        booking.customer.name.toLowerCase().includes(searchLower) ||
+        booking.whatsappNumber.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // If no search, apply status filter
+    const statusMatch = statusFilter === 'all' || booking.status === statusFilter;
+    return statusMatch;
+  });
 
-  const displayData = transformedBookings;
+  const displayData = filteredBookings;
 
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-8 ">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-headline-lg font-bold text-on-surface">
-          Recent Bookings
-        </h2>
-        
+    <div>
+      {/* Filter Section */}
+      <div className="flex gap-4 items-center mb-6">
+        <div className="flex-1 max-w-xs">
+          <label className="block text-sm font-medium text-on-surface-variant mb-2">
+            Filter by Status
+          </label>
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
+          >
+            <option value="all">All Bookings</option>
+            <option value="pending">Pending</option>
+            <option value="on-delivery">On Delivery</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <div className="flex-1 max-w-xs">
+          <label className="block text-sm font-medium text-on-surface-variant mb-2">
+            Search Customer
+          </label>
+          <input
+            type="text"
+            placeholder="Enter name or phone..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+        </div>
+
+        {/* Results counter */}
+        <div className="text-sm text-on-surface-variant pt-6">
+          <span>{filteredBookings.length} results</span>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Table Section */}
+      {filteredBookings.length === 0 ? (
+        <div className="bg-surface-container-lowest rounded-xl p-8 text-center">
+          <p className="text-on-surface-variant">No bookings found</p>
+        </div>
+      ) : (
+        <div className="bg-surface-container-lowest rounded-xl p-8">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-headline-lg font-bold text-on-surface">
+              Recent Bookings
+            </h2>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-sm">
@@ -243,7 +325,7 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
 
                   {/* Status Update Modal */}
                   {selectedBookingId === booking.id && showStatusModal && (
-                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]" onClick={() => setShowStatusModal(false)}>
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowStatusModal(false)}>
                       <div className="bg-surface-container-lowest rounded-2xl p-6 w-96 shadow-lg" onClick={(e) => e.stopPropagation()}>
                         <h3 className="text-headline-sm font-bold text-on-surface mb-4">Ubah Status Booking</h3>
                         <p className="text-sm text-on-surface-variant mb-4">Pilih status baru untuk booking ini:</p>
@@ -259,7 +341,6 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
                                 className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 <div className="font-medium text-sm">{option.label}</div>
-                                <div className="text-xs text-on-surface-variant">{option.db}</div>
                               </button>
                             ))}
                         </div>
@@ -277,8 +358,10 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+          </table>
+        </div>
+        </div>
+      )}
     </div>
   );
 }
