@@ -79,20 +79,19 @@ export default function SupportPage() {
       />
 
       {/* Support Channels */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         {supportChannels.map((channel) => (
           <div
             key={channel.title}
-            className="bg-surface-container-lowest rounded-xl p-6 border border-surface-container-high hover:border-primary/50 transition-colors"
-          >
-            <div className="flex items-center justify-between mb-4">
-              {channel.icon === 'mail' && <MdMail size={24} className="text-primary" />}
-              {channel.icon === 'phone' && <MdPhone size={24} className="text-primary" />}
-              {channel.icon === 'chat' && <MdChat size={24} className="text-primary" />}
-              {channel.icon === 'description' && <MdDescription size={24} className="text-primary" />}
+            className="bg-surface-container-lowest rounded-xl p-4 md:p-6 border border-surface-container-high hover:border-primary/50 transition-colors">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              {channel.icon === 'mail' && <MdMail size={20} className="md:w-6 md:h-6 text-primary" />}
+              {channel.icon === 'phone' && <MdPhone size={20} className="md:w-6 md:h-6 text-primary" />}
+              {channel.icon === 'chat' && <MdChat size={20} className="md:w-6 md:h-6 text-primary" />}
+              {channel.icon === 'description' && <MdDescription size={20} className="md:w-6 md:h-6 text-primary" />}
             </div>
-            <h3 className="font-bold text-on-surface mb-2">{channel.title}</h3>
-            <p className="text-sm text-on-surface-variant mb-3">
+            <h3 className="font-bold text-sm md:text-base text-on-surface mb-1.5 md:mb-2">{channel.title}</h3>
+            <p className="text-xs md:text-sm text-on-surface-variant mb-2 md:mb-3">
               {channel.description}
             </p>
             <p className="text-xs text-primary font-medium">
@@ -103,93 +102,94 @@ export default function SupportPage() {
       </div>
 
       {/* Contact Form */}
-      <div className="bg-surface-container-lowest rounded-xl p-8">
-        <h2 className="text-headline-md font-bold text-on-surface mb-6">
+      <div className="bg-surface-container-lowest rounded-xl p-4 md:p-8">
+        <h2 className="text-lg md:text-headline-md font-bold text-on-surface mb-4 md:mb-6">
           Send us a Message
         </h2>
 
-        <form className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form className="space-y-3 md:space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-2">
+              <label className="block text-xs md:text-sm font-medium text-on-surface-variant mb-1.5 md:mb-2">
                 Name
               </label>
               <input
                 type="text"
                 placeholder="Your name"
-                className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 md:px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-2">
+              <label className="block text-xs md:text-sm font-medium text-on-surface-variant mb-1.5 md:mb-2">
                 Email
               </label>
               <input
                 type="email"
                 placeholder="your.email@example.com"
-                className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 md:px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-on-surface-variant mb-2">
+            <label className="block text-xs md:text-sm font-medium text-on-surface-variant mb-1.5 md:mb-2">
               Subject
             </label>
             <input
               type="text"
               placeholder="How can we help?"
-              className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 md:px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-on-surface-variant mb-2">
+            <label className="block text-xs md:text-sm font-medium text-on-surface-variant mb-1.5 md:mb-2">
               Message
             </label>
             <textarea
               rows="5"
               placeholder="Describe your issue or question..."
-              className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+              className="w-full px-3 md:px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
             ></textarea>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-2 md:gap-3 pt-3 md:pt-4">
             <button
               type="button"
-              className="px-6 py-3 rounded-xl font-medium text-on-surface bg-surface-container hover:bg-surface-container-high transition-colors"
+              className="px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium text-xs md:text-base text-on-surface bg-surface-container hover:bg-surface-container-high transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl font-medium text-on-primary bg-primary hover:opacity-90 transition-opacity shadow-[0_12px_24px_-6px_rgba(0,102,138,0.2)] flex items-center gap-2"
+              className="px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium text-xs md:text-base text-on-primary bg-primary hover:opacity-90 transition-opacity shadow-[0_12px_24px_-6px_rgba(0,102,138,0.2)] flex items-center justify-center gap-1.5 md:gap-2"
             >
-              <MdSend size={18} />
-              Send Message
+              <MdSend size={16} className="md:w-5 md:h-5" />
+              <span className="hidden sm:inline">Send Message</span>
+              <span className="sm:hidden">Send</span>
             </button>
           </div>
         </form>
       </div>
 
       {/* FAQs */}
-      <div className="bg-surface-container-lowest rounded-xl p-8">
-        <h2 className="text-headline-md font-bold text-on-surface mb-6">
+      <div className="bg-surface-container-lowest rounded-xl p-4 md:p-8">
+        <h2 className="text-lg md:text-headline-md font-bold text-on-surface mb-4 md:mb-6">
           Frequently Asked Questions
         </h2>
 
-        <div className="space-y-4">
+        <div className="space-y-2 md:space-y-4">
           {faqs.map((faq, index) => (
             <details
               key={faq.id}
-              className="group border border-surface-container-high rounded-lg p-4 open:bg-primary-fixed/10 cursor-pointer"
+              className="group border border-surface-container-high rounded-lg p-3 md:p-4 open:bg-primary-fixed/10 cursor-pointer"
             >
-              <summary className="flex items-center justify-between font-medium text-on-surface cursor-pointer">
-                <span>{faq.question}</span>
-                <MdExpandMore size={24} className="transition-transform group-open:rotate-180" />
+              <summary className="flex items-start justify-between font-medium text-xs md:text-base text-on-surface cursor-pointer gap-2">
+                <span className="text-left">{faq.question}</span>
+                <MdExpandMore size={18} className="md:w-6 md:h-6 transition-transform flex-shrink-0 group-open:rotate-180" />
               </summary>
-              <p className="mt-4 text-sm text-on-surface-variant">
+              <p className="mt-2.5 md:mt-4 text-xs md:text-sm text-on-surface-variant">
                 {faq.answer}
               </p>
             </details>

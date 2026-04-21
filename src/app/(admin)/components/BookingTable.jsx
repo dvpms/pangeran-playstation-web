@@ -210,15 +210,15 @@ Berikut detail pesanan Anda:
   return (
     <div>
       {/* Filter Section */}
-      <div className="flex gap-4 items-center mb-6">
-        <div className="flex-1 max-w-xs">
-          <label className="block text-sm font-medium text-on-surface-variant mb-2">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-start md:items-end mb-6">
+        <div className="flex-1 w-full max-w-none md:max-w-xs">
+          <label className="block text-xs md:text-sm font-medium text-on-surface-variant mb-2">
             Filter by Status
           </label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full px-3 md:px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
           >
             <option value="all">All Bookings</option>
             <option value="pending">Pending</option>
@@ -228,8 +228,8 @@ Berikut detail pesanan Anda:
           </select>
         </div>
 
-        <div className="flex-1 max-w-xs">
-          <label className="block text-sm font-medium text-on-surface-variant mb-2">
+        <div className="flex-1 w-full max-w-none md:max-w-xs">
+          <label className="block text-xs md:text-sm font-medium text-on-surface-variant mb-2">
             Search Customer
           </label>
           <input
@@ -237,12 +237,12 @@ Berikut detail pesanan Anda:
             placeholder="Enter name or phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full px-3 md:px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
           />
         </div>
 
         {/* Results counter */}
-        <div className="text-sm text-on-surface-variant pt-6">
+        <div className="text-xs md:text-sm text-on-surface-variant">
           <span>{filteredBookings.length} results</span>
         </div>
       </div>
@@ -253,31 +253,31 @@ Berikut detail pesanan Anda:
           <p className="text-on-surface-variant">No bookings found</p>
         </div>
       ) : (
-        <div className="bg-surface-container-lowest rounded-xl p-8">
+        <div className="bg-surface-container-lowest rounded-xl p-4 md:p-8">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-headline-lg font-bold text-on-surface">
+          <div className="flex justify-between items-center mb-4 md:mb-6">
+            <h2 className="text-lg md:text-headline-lg font-bold text-on-surface">
               Recent Bookings
             </h2>
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          {/* DESKTOP TABLE VIEW (Hidden on mobile) */}
+          <div className="hidden md:block overflow-x-auto -mx-8 md:mx-0">
+            <table className="w-full text-left border-collapse text-xs md:text-sm">
               <thead>
-                <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-sm">
-                  <th className="py-4 px-4 font-medium">Customer</th>
-                  <th className="py-4 px-4 font-medium">Unit</th>
-                  <th className="py-4 px-4 font-medium">TV</th>
-                  <th className="py-4 px-4 font-medium">Tanggal</th>
-                  <th className="py-4 px-4 font-medium">Duration</th>
-                  <th className="py-4 px-4 font-medium">Delivery Area</th>
-                  <th className="py-4 px-4 font-medium">Whatsapp</th>
-                  <th className="py-4 px-4 font-medium">Status</th>
-                  <th className="py-4 px-4 font-medium text-right">Actions</th>
+                <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-xs md:text-sm">
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Customer</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Unit</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">TV</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Tanggal</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Duration</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Delivery Area</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Whatsapp</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Status</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="text-sm">
+              <tbody className="text-xs md:text-sm">
                 {displayData.map((booking) => {
                   // Get original booking data for message generation
                   const originalBooking = bookings.find(
@@ -290,44 +290,44 @@ Berikut detail pesanan Anda:
                       className="group hover:bg-surface-container-low/50 transition-colors border-b border-surface-container-low/50"
                     >
                       {/* Customer */}
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary-container/20 text-primary flex items-center justify-center font-bold">
+                      <td className="py-2 md:py-4 px-2 md:px-4">
+                        <div className="flex items-center gap-2 md:gap-3">
+                          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary-container/20 text-primary flex items-center justify-center font-bold text-xs md:text-sm">
                             {booking.customer.avatar}
                           </div>
-                          <span className="font-semibold text-on-surface">
+                          <span className="font-semibold text-on-surface text-xs md:text-sm hidden md:inline">
                             {booking.customer.name}
                           </span>
                         </div>
                       </td>
 
                       {/* Unit */}
-                      <td className="py-4 px-4 text-on-surface-variant font-medium">
+                      <td className="py-2 md:py-4 px-2 md:px-4 text-on-surface-variant font-medium text-xs md:text-sm">
                         {booking.unit}
                       </td>
 
                       {/* TV */}
-                      <td className="py-4 px-4 text-on-surface-variant font-medium">
+                      <td className="py-2 md:py-4 px-2 md:px-4 text-on-surface-variant font-medium text-xs md:text-sm">
                         {booking.tv ? "Ya" : "Tidak"}
                       </td>
 
                       {/* Date */}
-                      <td className="py-4 px-4 text-on-surface-variant">
+                      <td className="py-2 md:py-4 px-2 md:px-4 text-on-surface-variant text-xs md:text-sm">
                         {booking.date}
                       </td>
 
                       {/* Duration */}
-                      <td className="py-4 px-4 text-on-surface-variant">
+                      <td className="py-2 md:py-4 px-2 md:px-4 text-on-surface-variant text-xs md:text-sm">
                         {booking.duration}
                       </td>
 
                       {/* Area */}
-                      <td className="py-4 px-4 text-on-surface-variant">
+                      <td className="py-2 md:py-4 px-2 md:px-4 text-on-surface-variant text-xs md:text-sm">
                         {booking.area}
                       </td>
 
                       {/* whatsapp */}
-                      <td className="py-4 px-4">
+                      <td className="py-2 md:py-4 px-2 md:px-4">
                         <a
                           href={`https://wa.me/${booking.whatsappNumber}?text=${encodeURIComponent(
                             generateGreetingMessage({
@@ -341,17 +341,18 @@ Berikut detail pesanan Anda:
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-green-500 hover:text-green-700 transition-colors"
+                          className="text-green-500 hover:text-green-700 transition-colors text-sm md:text-base"
                           title="Hubungi via WhatsApp dengan detail booking"
                         >
-                          <MdWhatsapp size={20} />
+                          <MdWhatsapp size={16} className="md:hidden" />
+                          <MdWhatsapp size={20} className="hidden md:block" />
                         </a>
                       </td>
 
                       {/* Status */}
-                      <td className="py-4 px-4">
+                      <td className="py-2 md:py-4 px-2 md:px-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${getStatusBadgeColor(
+                          className={`inline-flex items-center gap-1 px-2 py-1 md:px-2.5 md:py-1 rounded-full text-xs font-bold ${getStatusBadgeColor(
                             booking.status,
                           )}`}
                         >
@@ -360,29 +361,31 @@ Berikut detail pesanan Anda:
                       </td>
 
                       {/* Actions */}
-                      <td className="py-4 px-4 text-right">
-                        <div className="flex justify-end items-center gap-2">
+                      <td className="py-2 md:py-4 px-2 md:px-4 text-right">
+                        <div className="flex justify-end items-center gap-1 md:gap-2">
                           {/* Update Status Button */}
                           <button
                             onClick={() => {
                               setSelectedBookingId(booking.id);
                               setShowStatusModal(true);
                             }}
-                            className="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
+                            className="p-1.5 md:p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
                             title="Update Status"
                             disabled={isUpdating}
                           >
-                            <MdEdit size={18} />
+                            <MdEdit size={16} className="md:hidden" />
+                            <MdEdit size={18} className="hidden md:block" />
                           </button>
 
                           {/* Delete Button */}
                           <button
                             onClick={() => handleDeleteBooking(booking.id)}
-                            className="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                            className="p-1.5 md:p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
                             title="Delete Booking"
                             disabled={isUpdating}
                           >
-                            <MdDelete size={18} />
+                            <MdDelete size={16} className="md:hidden" />
+                            <MdDelete size={18} className="hidden md:block" />
                           </button>
                         </div>
 
@@ -390,11 +393,11 @@ Berikut detail pesanan Anda:
                         {selectedBookingId === booking.id &&
                           showStatusModal && (
                             <div
-                              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
                               onClick={() => setShowStatusModal(false)}
                             >
                               <div
-                                className="bg-surface-container-lowest rounded-2xl p-6 w-96 shadow-lg"
+                                className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-lg"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <h3 className="text-headline-sm font-bold text-on-surface mb-4">
@@ -444,6 +447,176 @@ Berikut detail pesanan Anda:
                 })}
               </tbody>
             </table>
+            </div>
+
+          {/* MOBILE CARD VIEW (Hidden on desktop) */}
+          <div className="md:hidden space-y-3">
+            {displayData.map((booking) => (
+              <div
+                key={booking.id}
+                className="group relative overflow-hidden rounded-2xl border border-outline-variant/70 bg-linear-to-br from-surface-container-lowest via-surface-container-low to-surface-container shadow-ambient-blue ring-1 ring-primary/10 backdrop-blur-sm transition-all duration-300 active:scale-[0.99]"
+              >
+                <div className="absolute inset-x-0 top-0 h-1 bg-premium-glow opacity-90" />
+
+                {/* Card Header - Customer Info */}
+                <div className="relative flex items-center justify-between mb-3 p-4 pb-0">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-primary-container/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-primary/15 shadow-sm shadow-primary/10">
+                      {booking.customer.avatar}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-on-surface truncate">
+                        {booking.customer.name}
+                      </p>
+                      <p className="text-xs text-on-surface-variant truncate">
+                        {booking.customer.phone || booking.whatsappNumber}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ml-2 shadow-sm ${getStatusBadgeColor(
+                      booking.status,
+                    )}`}
+                  >
+                    {booking.statusLabel}
+                  </span>
+                </div>
+
+                {/* Card Body - Booking Details */}
+                <div className="mx-4 mt-4 space-y-2 rounded-2xl border border-outline-variant/40 bg-surface-container-high/55 p-3 shadow-inner">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-xs text-on-surface-variant">Unit</p>
+                      <p className="text-sm font-semibold text-on-surface">
+                        {booking.unit}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-on-surface-variant">TV</p>
+                      <p className="text-sm font-semibold text-on-surface">
+                        {booking.tv ? "Ya" : "Tidak"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-xs text-on-surface-variant">Tanggal</p>
+                      <p className="text-xs text-on-surface">{booking.date}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-on-surface-variant">Duration</p>
+                      <p className="text-xs text-on-surface font-semibold">
+                        {booking.duration}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-on-surface-variant mb-1">Area</p>
+                    <p className="text-xs text-on-surface">{booking.area}</p>
+                  </div>
+                </div>
+
+                {/* Card Footer - Actions */}
+                <div className="relative mx-4 mt-4 mb-4 flex items-center justify-end gap-2 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest/80 px-3 py-2 shadow-[0_12px_30px_-18px_rgba(0,102,138,0.45)]">
+                  {/* WhatsApp Button */}
+                  <a
+                    href={`https://wa.me/${booking.whatsappNumber}?text=${encodeURIComponent(
+                      generateGreetingMessage({
+                        customerName: booking.customer.name,
+                        tier: booking.unit,
+                        addonTv: booking.tv,
+                        date: booking.date,
+                        duration: booking.duration,
+                        area: booking.area,
+                      }),
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-xl text-green-500 hover:text-green-700 hover:bg-green-500/10 transition-colors shadow-sm"
+                    title="Hubungi via WhatsApp"
+                  >
+                    <MdWhatsapp size={18} />
+                  </a>
+
+                  {/* Edit Status Button */}
+                  <button
+                    onClick={() => {
+                      setSelectedBookingId(booking.id);
+                      setShowStatusModal(true);
+                    }}
+                    className="p-2 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors shadow-sm"
+                    title="Update Status"
+                    disabled={isUpdating}
+                  >
+                    <MdEdit size={18} />
+                  </button>
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDeleteBooking(booking.id)}
+                    className="p-2 rounded-xl text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors shadow-sm"
+                    title="Delete Booking"
+                    disabled={isUpdating}
+                  >
+                    <MdDelete size={18} />
+                  </button>
+                </div>
+
+                {/* Status Update Modal */}
+                {selectedBookingId === booking.id && showStatusModal && (
+                  <div
+                    className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+                    onClick={() => setShowStatusModal(false)}
+                  >
+                    <div
+                      className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <h3 className="text-headline-sm font-bold text-on-surface mb-4">
+                        Ubah Status Booking
+                      </h3>
+                      <p className="text-sm text-on-surface-variant mb-4">
+                        Pilih status baru untuk booking ini:
+                      </p>
+
+                      <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
+                        {statusOptions
+                          .filter(
+                            (opt) => opt.db !== booking.dbStatus,
+                          )
+                          .map((option) => (
+                            <button
+                              key={option.db}
+                              onClick={() =>
+                                handleStatusUpdate(
+                                  booking.id,
+                                  booking.dbStatus,
+                                  option.db,
+                                )
+                              }
+                              disabled={isUpdating}
+                              className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <div className="font-medium text-sm">
+                                {option.label}
+                              </div>
+                            </button>
+                          ))}
+                      </div>
+
+                      <button
+                        onClick={() => setShowStatusModal(false)}
+                        className="w-full px-4 py-2 rounded-lg border border-surface-container-high hover:bg-surface-container transition-colors text-on-surface font-medium"
+                      >
+                        Batal
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
