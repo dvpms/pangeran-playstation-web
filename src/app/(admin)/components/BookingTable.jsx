@@ -1,6 +1,15 @@
 "use client";
 
-import { MdFilterList, MdMoreVert, MdWhatsapp, MdCheck, MdClose, MdEdit, MdDelete, MdRefresh } from "react-icons/md";
+import {
+  MdFilterList,
+  MdMoreVert,
+  MdWhatsapp,
+  MdCheck,
+  MdClose,
+  MdEdit,
+  MdDelete,
+  MdRefresh,
+} from "react-icons/md";
 import { useState } from "react";
 import { updateBookingStatus, deleteBooking } from "@/services/booking";
 import Swal from "sweetalert2";
@@ -11,8 +20,8 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Map database status to UI status
   const mapStatus = (dbStatus) => {
@@ -44,24 +53,26 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
       const result = await updateBookingStatus(bookingId, newStatus);
       if (result.success) {
         // Update local state
-        setBookings(bookings.map(b => 
-          b.id === bookingId ? { ...b, status: newStatus } : b
-        ));
+        setBookings(
+          bookings.map((b) =>
+            b.id === bookingId ? { ...b, status: newStatus } : b,
+          ),
+        );
         setSelectedBookingId(null);
         setShowStatusModal(false);
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: 'Gagal mengubah status: ' + result.error,
+          icon: "error",
+          title: "Error!",
+          text: "Gagal mengubah status: " + result.error,
         });
       }
     } catch (error) {
       console.error("Error updating status:", error);
       Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'Terjadi kesalahan saat mengubah status',
+        icon: "error",
+        title: "Error!",
+        text: "Terjadi kesalahan saat mengubah status",
       });
     } finally {
       setIsUpdating(false);
@@ -73,32 +84,31 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
     if (!confirm("Apakah Anda yakin ingin menghapus booking ini?")) {
       return;
     }
-    
+
     setIsUpdating(true);
     try {
       const result = await deleteBooking(bookingId);
       if (result.success) {
         // Remove from local state
-        setBookings(bookings.filter(b => b.id !== bookingId));
+        setBookings(bookings.filter((b) => b.id !== bookingId));
         Swal.fire({
-          icon: 'success',
-          title: 'Deleted!',
-          text: 'Booking berhasil dihapus.',
+          icon: "success",
+          title: "Deleted!",
+          text: "Booking berhasil dihapus.",
         });
-
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: 'Gagal menghapus booking: ' + result.error,
+          icon: "error",
+          title: "Error!",
+          text: "Gagal menghapus booking: " + result.error,
         });
       }
     } catch (error) {
       console.error("Error deleting booking:", error);
       Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'Terjadi kesalahan saat menghapus booking',
+        icon: "error",
+        title: "Error!",
+        text: "Terjadi kesalahan saat menghapus booking",
       });
     } finally {
       setIsUpdating(false);
@@ -134,8 +144,12 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
       avatar: booking.customerName.charAt(0).toUpperCase(),
     },
     unit: booking.tier?.catalog?.name || "N/A",
-    duration: booking.tier?.label || calculateDuration(booking.startDate, booking.endDate) || "N/A",
+    duration:
+      booking.tier?.label ||
+      calculateDuration(booking.startDate, booking.endDate) ||
+      "N/A",
     area: booking.deliveryArea,
+    tv: booking.addonTv,
     whatsappNumber: booking.whatsappNumber,
     status: mapStatus(booking.status),
     dbStatus: booking.status,
@@ -156,16 +170,17 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
   // Filter bookings based on status and search
   const filteredBookings = transformedBookings.filter((booking) => {
     // If there's a search query, prioritize search results (ignore status filter)
-    if (searchQuery.trim() !== '') {
+    if (searchQuery.trim() !== "") {
       const searchLower = searchQuery.toLowerCase();
       return (
         booking.customer.name.toLowerCase().includes(searchLower) ||
         booking.whatsappNumber.toLowerCase().includes(searchLower)
       );
     }
-    
+
     // If no search, apply status filter
-    const statusMatch = statusFilter === 'all' || booking.status === statusFilter;
+    const statusMatch =
+      statusFilter === "all" || booking.status === statusFilter;
     return statusMatch;
   });
 
@@ -179,7 +194,7 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
           <label className="block text-sm font-medium text-on-surface-variant mb-2">
             Filter by Status
           </label>
-          <select 
+          <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="w-full px-4 py-2 rounded-lg bg-surface-container border border-surface-container-high focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -227,139 +242,162 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
 
           {/* Table */}
           <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-sm">
-              <th className="py-4 px-4 font-medium">Customer</th>
-              <th className="py-4 px-4 font-medium">Unit</th>
-              <th className="py-4 px-4 font-medium">Duration</th>
-              <th className="py-4 px-4 font-medium">Delivery Area</th>
-              <th className="py-4 px-4 font-medium">Whatsapp</th>
-              <th className="py-4 px-4 font-medium">Status</th>
-              <th className="py-4 px-4 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="text-sm">
-            {displayData.map((booking) => (
-              <tr
-                key={booking.id}
-                className="group hover:bg-surface-container-low/50 transition-colors border-b border-surface-container-low/50"
-              >
-                {/* Customer */}
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary-container/20 text-primary flex items-center justify-center font-bold">
-                      {booking.customer.avatar}
-                    </div>
-                    <span className="font-semibold text-on-surface">
-                      {booking.customer.name}
-                    </span>
-                  </div>
-                </td>
-
-                {/* Unit */}
-                <td className="py-4 px-4 text-on-surface-variant font-medium">
-                  {booking.unit}
-                </td>
-
-                {/* Duration */}
-                <td className="py-4 px-4 text-on-surface-variant">
-                  {booking.duration}
-                </td>
-
-                {/* Area */}
-                <td className="py-4 px-4 text-on-surface-variant">
-                  {booking.area}
-                </td>
-
-                {/* whatsapp */}
-                <td className="py-4 px-4">
-                  <a
-                    href={`https://wa.me/${booking.whatsappNumber}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-500 hover:text-green-700"
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-sm">
+                  <th className="py-4 px-4 font-medium">Customer</th>
+                  <th className="py-4 px-4 font-medium">Unit</th>
+                  <th className="py-4 px-4 font-medium">TV</th>
+                  <th className="py-4 px-4 font-medium">Duration</th>
+                  <th className="py-4 px-4 font-medium">Delivery Area</th>
+                  <th className="py-4 px-4 font-medium">Whatsapp</th>
+                  <th className="py-4 px-4 font-medium">Status</th>
+                  <th className="py-4 px-4 font-medium text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                {displayData.map((booking) => (
+                  <tr
+                    key={booking.id}
+                    className="group hover:bg-surface-container-low/50 transition-colors border-b border-surface-container-low/50"
                   >
-                    <MdWhatsapp size={20} />
-                  </a>
-                </td>
-
-                {/* Status */}
-                <td className="py-4 px-4">
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${getStatusBadgeColor(
-                      booking.status,
-                    )}`}
-                  >
-                    {booking.statusLabel}
-                  </span>
-                </td>
-
-                {/* Actions */}
-                <td className="py-4 px-4 text-right">
-                  <div className="flex justify-end items-center gap-2">
-
-                    {/* Update Status Button */}
-                    <button
-                      onClick={() => {
-                        setSelectedBookingId(booking.id);
-                        setShowStatusModal(true);
-                      }}
-                      className="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
-                      title="Update Status"
-                      disabled={isUpdating}
-                    >
-                      <MdEdit size={18} />
-                    </button>
-
-                    {/* Delete Button */}
-                    <button
-                      onClick={() => handleDeleteBooking(booking.id)}
-                      className="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
-                      title="Delete Booking"
-                      disabled={isUpdating}
-                    >
-                      <MdDelete size={18} />
-                    </button>
-                  </div>
-
-                  {/* Status Update Modal */}
-                  {selectedBookingId === booking.id && showStatusModal && (
-                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowStatusModal(false)}>
-                      <div className="bg-surface-container-lowest rounded-2xl p-6 w-96 shadow-lg" onClick={(e) => e.stopPropagation()}>
-                        <h3 className="text-headline-sm font-bold text-on-surface mb-4">Ubah Status Booking</h3>
-                        <p className="text-sm text-on-surface-variant mb-4">Pilih status baru untuk booking ini:</p>
-                        
-                        <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
-                          {statusOptions
-                            .filter(opt => opt.db !== booking.dbStatus)
-                            .map((option) => (
-                              <button
-                                key={option.db}
-                                onClick={() => handleStatusUpdate(booking.id, booking.dbStatus, option.db)}
-                                disabled={isUpdating}
-                                className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <div className="font-medium text-sm">{option.label}</div>
-                              </button>
-                            ))}
+                    {/* Customer */}
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary-container/20 text-primary flex items-center justify-center font-bold">
+                          {booking.customer.avatar}
                         </div>
-                        
+                        <span className="font-semibold text-on-surface">
+                          {booking.customer.name}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Unit */}
+                    <td className="py-4 px-4 text-on-surface-variant font-medium">
+                      {booking.unit}
+                    </td>
+
+                    {/* TV */}
+                    <td className="py-4 px-4 text-on-surface-variant font-medium">
+                      {booking.tv ? "Ya" : "Tidak"}
+                    </td>
+
+                    {/* Duration */}
+                    <td className="py-4 px-4 text-on-surface-variant">
+                      {booking.duration}
+                    </td>
+
+                    {/* Area */}
+                    <td className="py-4 px-4 text-on-surface-variant">
+                      {booking.area}
+                    </td>
+
+                    {/* whatsapp */}
+                    <td className="py-4 px-4">
+                      <a
+                        href={`https://wa.me/${booking.whatsappNumber}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-500 hover:text-green-700"
+                      >
+                        <MdWhatsapp size={20} />
+                      </a>
+                    </td>
+
+                    {/* Status */}
+                    <td className="py-4 px-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${getStatusBadgeColor(
+                          booking.status,
+                        )}`}
+                      >
+                        {booking.statusLabel}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-4 px-4 text-right">
+                      <div className="flex justify-end items-center gap-2">
+                        {/* Update Status Button */}
                         <button
-                          onClick={() => setShowStatusModal(false)}
-                          className="w-full px-4 py-2 rounded-lg border border-surface-container-high hover:bg-surface-container transition-colors text-on-surface font-medium"
+                          onClick={() => {
+                            setSelectedBookingId(booking.id);
+                            setShowStatusModal(true);
+                          }}
+                          className="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
+                          title="Update Status"
+                          disabled={isUpdating}
                         >
-                          Batal
+                          <MdEdit size={18} />
+                        </button>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => handleDeleteBooking(booking.id)}
+                          className="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                          title="Delete Booking"
+                          disabled={isUpdating}
+                        >
+                          <MdDelete size={18} />
                         </button>
                       </div>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          </table>
-        </div>
+
+                      {/* Status Update Modal */}
+                      {selectedBookingId === booking.id && showStatusModal && (
+                        <div
+                          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                          onClick={() => setShowStatusModal(false)}
+                        >
+                          <div
+                            className="bg-surface-container-lowest rounded-2xl p-6 w-96 shadow-lg"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <h3 className="text-headline-sm font-bold text-on-surface mb-4">
+                              Ubah Status Booking
+                            </h3>
+                            <p className="text-sm text-on-surface-variant mb-4">
+                              Pilih status baru untuk booking ini:
+                            </p>
+
+                            <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
+                              {statusOptions
+                                .filter((opt) => opt.db !== booking.dbStatus)
+                                .map((option) => (
+                                  <button
+                                    key={option.db}
+                                    onClick={() =>
+                                      handleStatusUpdate(
+                                        booking.id,
+                                        booking.dbStatus,
+                                        option.db,
+                                      )
+                                    }
+                                    disabled={isUpdating}
+                                    className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    <div className="font-medium text-sm">
+                                      {option.label}
+                                    </div>
+                                  </button>
+                                ))}
+                            </div>
+
+                            <button
+                              onClick={() => setShowStatusModal(false)}
+                              className="w-full px-4 py-2 rounded-lg border border-surface-container-high hover:bg-surface-container transition-colors text-on-surface font-medium"
+                            >
+                              Batal
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
