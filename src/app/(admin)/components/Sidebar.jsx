@@ -29,8 +29,8 @@ const menuItems = [
   { href: "/dashboard", label: "Overview", icon: "dashboard" },
   { href: "/bookings", label: "Bookings", icon: "calendar_month" },
   { href: "/inventory", label: "Inventory", icon: "sports_esports" },
-  { href: "/customers", label: "Customers", icon: "group" },
-  { href: "/finance", label: "Finance", icon: "payments" },
+  { href: "/customers", label: "Customers", icon: "group", comingSoon: true },
+  { href: "/finance", label: "Finance", icon: "payments", comingSoon: true },
 ];
 
 const footerItems = [
@@ -70,18 +70,46 @@ export default function Sidebar() {
         {menuItems.map((item) => {
           const active = isActive(item.href);
           const IconComponent = iconMap[item.icon];
+          const isDisabled = item.comingSoon;
+
+          const baseStyles = `flex items-center gap-3 px-4 py-3 rounded-xl font-['Plus_Jakarta_Sans'] font-medium tracking-tight transition-all duration-200`;
+          const activeStyles = `bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-300 font-bold shadow-sm`;
+          const inactiveStyles = `text-slate-500 dark:text-slate-400 hover:text-sky-500 hover:bg-white/50 dark:hover:bg-slate-800/50`;
+          const disabledStyles = `text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60`;
+
+          const content = (
+            <>
+              {IconComponent && <IconComponent size={24} />}
+              <span className="flex-1">{item.label}</span>
+              {isDisabled && (
+                <span className="text-xs bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 px-2 py-1 rounded-full font-semibold whitespace-nowrap">
+                  Coming Soon
+                </span>
+              )}
+            </>
+          );
+
+          if (isDisabled) {
+            return (
+              <div
+                key={item.href}
+                className={`${baseStyles} ${disabledStyles} active:scale-[1]`}
+                title="Feature coming soon"
+              >
+                {content}
+              </div>
+            );
+          }
+
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-['Plus_Jakarta_Sans'] font-medium tracking-tight transition-all duration-200 active:scale-[0.97] ${
-                active
-                  ? "bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-300 font-bold shadow-sm"
-                  : "text-slate-500 dark:text-slate-400 hover:text-sky-500 hover:bg-white/50 dark:hover:bg-slate-800/50"
+              className={`${baseStyles} active:scale-[0.97] ${
+                active ? activeStyles : inactiveStyles
               }`}
             >
-              {IconComponent && <IconComponent size={24} />}
-              <span>{item.label}</span>
+              {content}
             </Link>
           );
         })}
