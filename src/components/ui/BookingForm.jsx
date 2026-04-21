@@ -484,7 +484,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                 Memproses...
               </>
             ) : (
-              "Kirim Permintaan Booking"
+              "Kirim"
             )}
           </button>
 
