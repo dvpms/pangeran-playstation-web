@@ -58,7 +58,7 @@ export default function CatalogUnit({
           </div>
         </div>
         <a
-          href="#booking"
+          href="booking"
           className="mt-6 block text-center py-3 rounded-xl bg-primary text-white font-bold"
         >
           Booking Sekarang

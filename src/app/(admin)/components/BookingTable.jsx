@@ -140,6 +140,7 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
     tier,
     addonTv,
     duration,
+    date,
     area,
   }) => {
     const template = `Halo ${customerName},
@@ -151,6 +152,7 @@ Berikut detail pesanan Anda:
 - Nama: ${customerName}
 - Konsol: ${tier || "N/A"}
 - TV: ${addonTv ? "Ya" : "Tidak"}
+- Tanggal Mulai: ${date}
 - Durasi: ${duration}
 - Area Pengiriman: ${area}`;
     return template;
@@ -269,7 +271,7 @@ Berikut detail pesanan Anda:
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Customer</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Unit</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">TV</th>
-                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Tanggal</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Tanggal Mulai</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Duration</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Delivery Area</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Whatsapp</th>
@@ -501,7 +503,7 @@ Berikut detail pesanan Anda:
 
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-xs text-on-surface-variant">Tanggal</p>
+                      <p className="text-xs text-on-surface-variant">Tanggal Mulai</p>
                       <p className="text-xs text-on-surface">{booking.date}</p>
                     </div>
                     <div className="text-right">
@@ -563,61 +565,72 @@ Berikut detail pesanan Anda:
                     <MdDelete size={18} />
                   </button>
                 </div>
-
-                {/* Status Update Modal */}
-                {selectedBookingId === booking.id && showStatusModal && (
-                  <div
-                    className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-                    onClick={() => setShowStatusModal(false)}
-                  >
-                    <div
-                      className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-lg"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <h3 className="text-headline-sm font-bold text-on-surface mb-4">
-                        Ubah Status Booking
-                      </h3>
-                      <p className="text-sm text-on-surface-variant mb-4">
-                        Pilih status baru untuk booking ini:
-                      </p>
-
-                      <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
-                        {statusOptions
-                          .filter(
-                            (opt) => opt.db !== booking.dbStatus,
-                          )
-                          .map((option) => (
-                            <button
-                              key={option.db}
-                              onClick={() =>
-                                handleStatusUpdate(
-                                  booking.id,
-                                  booking.dbStatus,
-                                  option.db,
-                                )
-                              }
-                              disabled={isUpdating}
-                              className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <div className="font-medium text-sm">
-                                {option.label}
-                              </div>
-                            </button>
-                          ))}
-                      </div>
-
-                      <button
-                        onClick={() => setShowStatusModal(false)}
-                        className="w-full px-4 py-2 rounded-lg border border-surface-container-high hover:bg-surface-container transition-colors text-on-surface font-medium"
-                      >
-                        Batal
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
+
+          {/* Global Status Update Modal - Rendered outside of card loop */}
+          {showStatusModal && selectedBookingId && (
+            <div
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4"
+              onClick={() => setShowStatusModal(false)}
+            >
+              <div
+                className="bg-surface-container-lowest rounded-2xl shadow-lg w-full max-w-sm max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 className="text-lg sm:text-headline-sm font-bold text-on-surface mb-3 sm:mb-4">
+                  Ubah Status Booking
+                </h3>
+                <p className="text-xs sm:text-sm text-on-surface-variant mb-4">
+                  Pilih status baru untuk booking ini:
+                </p>
+
+                <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
+                  {statusOptions
+                    .filter(
+                      (opt) => {
+                        const selectedBooking = bookings.find(
+                          (b) => b.id === selectedBookingId,
+                        );
+                        return opt.db !== selectedBooking?.status;
+                      },
+                    )
+                    .map((option) => (
+                      <button
+                        key={option.db}
+                        onClick={() => {
+                          const selectedBooking = bookings.find(
+                            (b) => b.id === selectedBookingId,
+                          );
+                          if (selectedBooking) {
+                            handleStatusUpdate(
+                              selectedBookingId,
+                              selectedBooking.status,
+                              option.db,
+                            );
+                          }
+                        }}
+                        disabled={isUpdating}
+                        className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <div className="font-medium">
+                          {option.label}
+                        </div>
+                      </button>
+                    ))}
+                </div>
+
+                <button
+                  onClick={() => setShowStatusModal(false)}
+                  className="w-full px-4 py-2 sm:py-2.5 rounded-lg border border-surface-container-high hover:bg-surface-container transition-colors text-on-surface font-medium text-sm"
+                  disabled={isUpdating}
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
