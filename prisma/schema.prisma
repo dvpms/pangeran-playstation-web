@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Catalog {
+  id          String        @id @default(uuid())
+  name        String
+  type        ItemType
+  description String?
+  inventories Inventory[]
+  tiers       PricingTier[]
+}
+
+model PricingTier {
+  id        String    @id @default(uuid())
+  catalogId String
+  duration  String
+  label     String
+  price     Decimal   @db.Decimal(10, 2)
+  oldPrice  Decimal?  @db.Decimal(10, 2)
+  bookings  Booking[]
+  catalog   Catalog   @relation(fields: [catalogId], references: [id], onDelete: Cascade)
+}
+
+model Inventory {
+  id           String        @id @default(uuid())
+  catalogId    String
+  serialCode   String        @unique
+  status       ItemStatus    @default(AVAILABLE)
+  bookingItems BookingItem[]
+  catalog      Catalog       @relation(fields: [catalogId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  customerName   String?
+  whatsappNumber String
+  startDate      DateTime
+  endDate        DateTime
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  status         BookingStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  addonTv        Boolean       @default(false)
+  tierId         String
+  deliveryArea   String?
+  updatedAt      DateTime      @updatedAt
+  tier           PricingTier   @relation(fields: [tierId], references: [id])
+  items          BookingItem[]
+}
+
+model BookingItem {
+  id          String    @id @default(uuid())
+  bookingId   String
+  inventoryId String
+  booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+
+  @@unique([bookingId, inventoryId])
+}
+
+// Tambahkan di bagian bawah prisma/schema.prisma
+
+// 6. Manajemen Pengguna (Admin)
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  password  String   // Akan menyimpan password yang di-hash
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  OWNER
+}
+
+enum ItemType {
+  CONSOLE
+  ADDON
+}
+
+enum ItemStatus {
+  AVAILABLE
+  MAINTENANCE
+  RETIRED
+}
+
+enum BookingStatus {
+  PENDING
+  WAITING_PAYMENT
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}

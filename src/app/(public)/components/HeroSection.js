@@ -23,7 +23,7 @@ export default function HeroSection() {
             </p>
             <div className="flex gap-3 flex-col sm:flex-row">
               <a
-                href="#booking"
+                href="booking"
                 className="inline-flex items-center justify-center px-6 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold"
               >
                 Booking Sekarang
