@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { HoverScale } from "@/components/animations";
 
 export default function CatalogUnit({
   title,
@@ -12,14 +13,16 @@ export default function CatalogUnit({
     <article className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col md:flex-row gap-6">
       <div className="md:w-1/2 rounded-xl overflow-hidden">
         {image ? (
-          <Image
-            src={image}
-            alt={title}
-            loading="lazy"
-            width={800}
-            height={600}
-            className="object-cover w-full h-full"
-          />
+          <HoverScale scale={1.08}>
+            <Image
+              src={image}
+              alt={title}
+              loading="lazy"
+              width={800}
+              height={600}
+              className="object-cover w-full h-full"
+            />
+          </HoverScale>
         ) : (
           <div className="w-full h-44 bg-surface-container flex items-center justify-center">
             No Image

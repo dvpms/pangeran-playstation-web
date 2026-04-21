@@ -1,6 +1,7 @@
 import Container from "@/components/ui/Container";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdWarning, MdBadge, MdOutlinePedalBike } from "react-icons/md";
+import { ScrollReveal, StaggerContainer } from "@/components/animations";
 
 export default function Terms() {
   const termsData = [
@@ -101,7 +102,7 @@ export default function Terms() {
       <Container>
         <div className="max-w-4xl mx-auto flex flex-col gap-12">
           {/* Header Section */}
-          <div className="flex flex-col gap-6 relative">
+          <ScrollReveal animation="fadeInUp" duration={0.6} className="flex flex-col gap-6 relative">
             <h2 className="text-center md:text-left text-xl md:text-5xl font-extrabold tracking-tight text-surface-on relative inline-block">
               Syarat & Ketentuan Layanan
               <div className="hidden md:block md:absolute -bottom-2 left-0 w-24 h-1.5 bg-secondary-container rounded-full"></div>
@@ -110,10 +111,10 @@ export default function Terms() {
               Harap baca dengan saksama seluruh syarat dan ketentuan berikut
               sebelum Anda melanjutkan proses pemesanan.
             </p>
-          </div>
+          </ScrollReveal>
 
           {/* Aturan Cards Container */}
-          <div className="bg-surface-container-low rounded-4xl p-2 md:p-8 flex flex-col gap-8">
+          <StaggerContainer staggerDelay={0.15} duration={0.5} className="bg-surface-container-low rounded-4xl p-2 md:p-8 flex flex-col gap-8">
             {termsData.map((term) => (
               <div
                 key={term.id}
@@ -159,7 +160,7 @@ export default function Terms() {
                 </div>
               </div>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </Container>
     </section>
