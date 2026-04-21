@@ -1,5 +1,6 @@
 import Container from "@/components/ui/Container";
 import Image from "next/image";
+import { ScrollReveal, StaggerContainer } from "@/components/animations";
 
 export default function CoverageArea() {
   // Ekstraksi data untuk mencegah perulangan kode UI (DRY Principle)
@@ -24,13 +25,15 @@ export default function CoverageArea() {
           <div className="grid lg:grid-cols-12 gap-16 items-center">
             {/* Kolom Kiri: Teks & Informasi */}
             <div className="lg:col-span-5">
-              <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-surface-on mb-6">
-                Area Jangkauan Kami
-              </h2>
-              <p className="text-surface-on/80 mb-10 text-sm md:text-lg">
-                Kami memiliki 2 Base Station strategis untuk memastikan
-                pengantaran secepat kilat ke rumah Anda.
-              </p>
+              <ScrollReveal animation="fadeInUp" duration={0.6}>
+                <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-surface-on mb-6">
+                  Area Jangkauan Kami
+                </h2>
+                <p className="text-surface-on/80 mb-10 text-sm md:text-lg">
+                  Kami memiliki 2 Base Station strategis untuk memastikan
+                  pengantaran secepat kilat ke rumah Anda.
+                </p>
+              </ScrollReveal>
 
               {/* Kartu Base Station */}
               <div className="grid grid-cols-2 gap-4 mb-10">
@@ -57,7 +60,7 @@ export default function CoverageArea() {
                 <h4 className="text-xs font-extrabold text-surface-on/60 uppercase tracking-[0.2em] mb-4 text-center ">
                   Service Area
                 </h4>
-                <div className="grid grid-cols-2 gap-2 text-center">
+                <StaggerContainer staggerDelay={0.1} duration={0.4} className="grid grid-cols-2 gap-2 text-center">
                   {serviceAreas.map((area) => (
                     <span
                       key={area}
@@ -66,7 +69,7 @@ export default function CoverageArea() {
                       {area}
                     </span>
                   ))}
-                </div>
+                </StaggerContainer>
               </div>
             </div>
 

@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import GamesCard from "@/components/ui/GamesCard";
+import { HoverScale } from "@/components/animations";
 
 export default function GamesCarousel({ items = [] }) {
   const ref = useRef(null);
@@ -20,7 +21,9 @@ export default function GamesCarousel({ items = [] }) {
         >
           {items.map((it, idx) => (
             <div key={idx} className="">
-              <GamesCard {...it} />
+              <HoverScale scale={1.05} className="overflow-hidden rounded-lg">
+                <GamesCard {...it} />
+              </HoverScale>
             </div>
           ))}
         </div>

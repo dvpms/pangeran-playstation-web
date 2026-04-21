@@ -46,4 +46,30 @@
     -ms-overflow-style: none; /* Edge & IE */
     scrollbar-width: none; /* Firefox */
   }
+
+  /* Reduced Motion Support - Accessibility & Performance */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Mobile Device Optimization - Disable heavy animations */
+  @media (max-width: 768px) {
+    .animation-heavy {
+      animation-duration: 0.3s;
+    }
+  }
+
+  /* Low-end Device Detection (optional - requires JS support) */
+  @supports (animation: none) {
+    @media (max-width: 640px) and (max-width: 2560px) {
+      .scroll-reveal-animation {
+        /* Slightly reduced timing on mobile */
+        animation-duration: 0.4s;
+      }
+    }
+  }
 }
