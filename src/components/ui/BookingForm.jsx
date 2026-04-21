@@ -134,7 +134,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         Swal.fire({
           icon: 'success',
           title: 'Sukses!',
-          text: 'Booking berhasil dibuat! Silakan cek WhatsApp untuk konfirmasi lebih lanjut.',
+          text: 'Booking berhasil dibuat! Anda akan segera dihubungi admin kami.',
         });
       } else {
         Swal.fire({
@@ -377,7 +377,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   value={whatsapp}
                   min="0"
                   onChange={(e) => setWhatsapp(e.target.value)}
-                  placeholder="Contoh: 081234567890"
+                  placeholder="Contoh: 6281234567890"
                   className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-primary/20 focus:border-primary"
                 />
               </div>
