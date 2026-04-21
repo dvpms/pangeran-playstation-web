@@ -3,11 +3,15 @@
 
 import { useState, useEffect } from "react";
 import { BiCalendar } from "react-icons/bi";
-import { FaTv } from "react-icons/fa";
+import { FaReceipt, FaSpinner, FaTv } from "react-icons/fa";
 import { GiConsoleController } from "react-icons/gi";
 import { IoMdTime } from "react-icons/io";
 import Select from "react-select";
+import { FaMapMarkerAlt } from "react-icons/fa";
+
 import { getUnavailableDates, submitBooking } from "@/services/booking";
+import Image from "next/image";
+import Swal from "sweetalert2";
 
 export default function BookingForm({ initialConsoles, initialAddons }) {
   const defaultConsole = initialConsoles.length > 0 ? initialConsoles[0] : null;
@@ -125,23 +129,32 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         setWhatsapp("");
         setArea(null);
         // setAddress("");
-        
-
 
         console.log("Booking berhasil dibuat:", result.booking);
-        alert("Booking berhasil dibuat! Silakan cek WhatsApp untuk konfirmasi lebih lanjut.");
-
+        Swal.fire({
+          icon: 'success',
+          title: 'Sukses!',
+          text: 'Booking berhasil dibuat! Silakan cek WhatsApp untuk konfirmasi lebih lanjut.',
+        });
       } else {
-        alert(result.message); // Tampilkan error jika unit direbut orang lain
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: result.message || 'Terjadi kesalahan saat membuat booking.',
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan jaringan.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Terjadi kesalahan jaringan.',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
       {/* Kolom Kiri: Form Input */}
@@ -150,7 +163,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         <section>
           <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
             <span className="material-symbols-outlined text-primary">
-              videogame_asset
+              <GiConsoleController className="w-10 h-10" />
             </span>
             Pilih Unit
           </h3>
@@ -173,10 +186,14 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                     Dipilih
                   </div>
                 )}
-                <div className="w-full h-32 bg-surface-container-lowest rounded-xl mb-4 flex items-center justify-center">
-                  <span className="text-surface-on/40 text-sm font-bold">
-                    Gambar {cons.name}
-                  </span>
+                <div className="w-full h-48 bg-surface-container-lowest rounded-xl mb-4 flex items-center justify-center">
+                  <Image
+                    src={"/images/ps4-slim1.png"}
+                    alt={cons.name}
+                    loading="lazy"
+                    width={128}
+                    height={128}
+                  />
                 </div>
                 <h4 className="font-bold text-surface-on text-lg">
                   {cons.name}
@@ -196,7 +213,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   PS4 Pro
                 </span>
               </div>
-              <h4 className="font-bold text-surface-on text-lg">PS4 Pro 4K</h4>
+              <h4 className="font-bold text-surface-on text-lg">PS4 Pro</h4>
               <p className="text-sm text-surface-on/60 mt-1">
                 Performa maksimal resolusi 4K tajam.
               </p>
@@ -207,7 +224,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         {/* Section 2: Pilih Paket Durasi */}
         <section>
           <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
-            <span className="material-symbols-outlined text-primary">sell</span>
+            <IoMdTime className="text-primary w-10 h-10" />
             Pilih Paket Sewa
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -239,7 +256,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         {tvAddon && (
           <section>
             <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
-              <span className="material-symbols-outlined text-primary">tv</span>
+              <FaTv className="text-primary w-10 h-10" />
               Pilih Add-on
             </h3>
             <div
@@ -274,10 +291,8 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on">
-              <span className="material-symbols-outlined text-primary">
-                calendar_month
-              </span>
-              Pilih Tanggal Mulai
+              <BiCalendar className="text-primary w-10 h-10" /> Pilih Tanggal
+              Mulai
             </h3>
             {isLoadingDates && (
               <span className="text-xs text-primary animate-pulse font-bold">
@@ -333,7 +348,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         <section>
           <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
             <span className="material-symbols-outlined text-primary">
-              local_shipping
+              <FaMapMarkerAlt className="w-10 h-10 text-primary" />
             </span>
             Detail Pengiriman
           </h3>
@@ -402,13 +417,13 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
 
       {/* Kolom Kanan: Ringkasan Pesanan (Sidebar) */}
       <div className="lg:col-span-4">
-        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-[2rem] p-6 md:p-8 sticky top-24 shadow-ambient-blue">
+        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-4xl p-6 md:p-8 sticky top-24 shadow-ambient-blue">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-surface-on">
               Ringkasan Pesanan
             </h3>
             <span className="material-symbols-outlined text-surface-on/40">
-              receipt_long
+              <FaReceipt className="w-8 h-8 text-primary" />
             </span>
           </div>
 
@@ -465,9 +480,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
           >
             {isSubmitting ? (
               <>
-                <span className="animate-spin material-symbols-outlined">
-                  progress_activity
-                </span>
+               <FaSpinner className="animate-spin text-primary" />
                 Memproses...
               </>
             ) : (
