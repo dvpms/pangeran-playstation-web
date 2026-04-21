@@ -46,7 +46,7 @@ export default function DashboardPage() {
         <StatCard
           title="Total Bookings"
           value={bookings.length.toLocaleString()}
-          icon={MdLibraryBooks}
+          icon={<MdLibraryBooks />}
           subtitle={{
             text: 'All time',
           }}
@@ -55,7 +55,7 @@ export default function DashboardPage() {
         <StatCard
           title="Active Rentals"
           value={bookings.filter(b => b.status === 'ACTIVE').length.toLocaleString()}
-          icon={MdSportsEsports}
+          icon={<MdSportsEsports />}
           subtitle={{
             icon: <MdElectricBolt size={16} />,
             text: 'Consoles Available',
@@ -65,7 +65,7 @@ export default function DashboardPage() {
         <StatCard
           title="Total Revenue"
           value="Rp 45.2M"
-          icon={MdPayments}
+          icon={<MdPayments />}
           subtitle={{
             icon: <MdTrendingUp size={16} />,
             text: 'Growth this month',
@@ -75,7 +75,7 @@ export default function DashboardPage() {
         <StatCard
           title="Pending Verifications"
           value={bookings.filter(b => b.status === 'PENDING').length.toLocaleString()}
-          icon={MdVerifiedUser}
+          icon={<MdVerifiedUser />}
           variant="primary"
           subtitle={{
             text: 'Requires action',

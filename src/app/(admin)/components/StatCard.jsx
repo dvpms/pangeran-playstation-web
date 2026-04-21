@@ -53,7 +53,9 @@ export default function StatCard({
               : 'bg-primary-container/30 text-primary'
           }`}
         >
-          {typeof icon === 'function' ? icon({ size: 24 }) : typeof icon === 'string' ? <span>{icon}</span> : icon}
+
+          {icon}
+
         </div>
       </div>
 

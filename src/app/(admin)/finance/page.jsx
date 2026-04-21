@@ -61,8 +61,7 @@ export default function FinancePage() {
           value="Rp 28.7M"
           icon={MdCalendarMonth}
           subtitle={{
-            icon: <MdTrendingUp className='w-5 h-5' />,
-            text: '+15% growth',
+            text: 'growth',
           }}
         />
 
