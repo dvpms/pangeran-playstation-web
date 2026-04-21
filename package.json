@@ -7,7 +7,8 @@
     "dev": "next dev -p 5211",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prisma:migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -39,14 +40,5 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
-  },
-  "builds": [
-    {
-      "src": "next.config.mjs",
-      "use": "@vercel/next"
-    }
-  ],
-  "hooks": {
-    "build": "npm run prisma:migrate:deploy"
   }
 }
