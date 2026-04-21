@@ -140,6 +140,7 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
     tier,
     addonTv,
     duration,
+    date,
     area,
   }) => {
     const template = `Halo ${customerName},
@@ -151,6 +152,7 @@ Berikut detail pesanan Anda:
 - Nama: ${customerName}
 - Konsol: ${tier || "N/A"}
 - TV: ${addonTv ? "Ya" : "Tidak"}
+- Tanggal Mulai: ${date}
 - Durasi: ${duration}
 - Area Pengiriman: ${area}`;
     return template;
@@ -269,7 +271,7 @@ Berikut detail pesanan Anda:
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Customer</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Unit</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">TV</th>
-                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Tanggal</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Tanggal Mulai</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Duration</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Delivery Area</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Whatsapp</th>
@@ -501,7 +503,7 @@ Berikut detail pesanan Anda:
 
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-xs text-on-surface-variant">Tanggal</p>
+                      <p className="text-xs text-on-surface-variant">Tanggal Mulai</p>
                       <p className="text-xs text-on-surface">{booking.date}</p>
                     </div>
                     <div className="text-right">
