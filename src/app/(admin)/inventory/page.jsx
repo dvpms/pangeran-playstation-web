@@ -257,7 +257,7 @@ export default function InventoryPage() {
       />
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <StatCard
           title="Total Units"
           value={totalUnits.toString()}
@@ -288,15 +288,15 @@ export default function InventoryPage() {
       </div>
 
       {/* Inventory Table */}
-      <div className="bg-surface-container-lowest rounded-xl p-8 overflow-hidden">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-headline-lg font-bold text-on-surface">
+      <div className="bg-surface-container-lowest rounded-xl p-4 md:p-8 overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-6 mb-6">
+          <h2 className="text-lg md:text-headline-lg font-bold text-on-surface">
             Equipment Status
           </h2>
-          <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-medium text-sm hover:bg-surface-container-high transition-colors flex items-center gap-2">
-              <MdFilterList size={18} />
-              Filter
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full md:w-auto">
+            <button className="px-3 md:px-4 py-2 rounded-lg bg-surface-container text-on-surface font-medium text-sm hover:bg-surface-container-high transition-colors flex items-center gap-2 w-full md:w-auto justify-center md:justify-start">
+              <MdFilterList size={16} className="md:w-5 md:h-5" />
+              <span className="hidden sm:inline">Filter</span>
             </button>
           </div>
         </div>
@@ -312,14 +312,14 @@ export default function InventoryPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto -mx-4 md:mx-0">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-sm">
-                  <th className="py-4 px-4 font-medium">Jenis Konsol</th>
-                  <th className="py-4 px-4 font-medium">Serial Code</th>
-                  <th className="py-4 px-4 font-medium">Status</th>
-                  <th className="py-4 px-4 font-medium text-right">Actions</th>
+                <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-xs md:text-sm">
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Jenis Konsol</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium hidden md:table-cell">Serial Code</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Status</th>
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
@@ -328,15 +328,20 @@ export default function InventoryPage() {
                     key={item.id}
                     className="group hover:bg-surface-container-low/50 transition-colors border-b border-surface-container-low/50"
                   >
-                    <td className="py-4 px-4">
-                      <span className="font-semibold text-on-surface">
-                        {item.catalogName}
-                      </span>
+                    <td className="py-2 md:py-4 px-2 md:px-4">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-xs md:text-sm text-on-surface">
+                          {item.catalogName}
+                        </span>
+                        <span className="text-xs md:hidden text-on-surface-variant">
+                          {item.serialCode}
+                        </span>
+                      </div>
                     </td>
-                    <td className="py-4 px-4 text-on-surface-variant">
+                    <td className="py-2 md:py-4 px-2 md:px-4 text-on-surface-variant hidden md:table-cell text-xs md:text-sm">
                       {item.serialCode}
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-2 md:py-4 px-2 md:px-4">
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
                           item.status === "AVAILABLE"
@@ -351,26 +356,26 @@ export default function InventoryPage() {
                         {item.status === "BROKEN" && "✕ Rusak"}
                       </span>
                     </td>
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-2 md:py-4 px-2 md:px-4 text-right">
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => {
                             setSelectedInventory(item);
                             setShowStatusModal(true);
                           }}
-                          className="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
+                          className="p-1.5 md:p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
                           title={`Update status - ${item.serialCode}`}
                           disabled={isSubmitting}
                         >
-                          <MdEdit size={16} />
+                          <MdEdit size={14} className="md:w-4 md:h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteUnit(item.id)}
-                          className="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                          className="p-1.5 md:p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
                           title={`Delete - ${item.serialCode}`}
                           disabled={isSubmitting}
                         >
-                          <MdDelete size={16} />
+                          <MdDelete size={14} className="md:w-4 md:h-4" />
                         </button>
                       </div>
                     </td>
@@ -384,10 +389,10 @@ export default function InventoryPage() {
 
       {/* Add Unit Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-4">
           <div className="bg-surface-container-lowest rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             {/* Header */}
-            <div className="sticky top-0 bg-surface-container-highest px-6 py-4 border-b border-surface-container-low flex justify-between items-center">
+            <div className="sticky top-0 bg-surface-container-highest px-4 md:px-6 py-3 md:py-4 border-b border-surface-container-low flex justify-between items-center">
               <h2 className="text-headline-md font-bold text-on-surface">
                 Tambah Unit Mesin
               </h2>
@@ -401,7 +406,7 @@ export default function InventoryPage() {
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-4">
+            <div className="p-4 md:p-6 space-y-4">
               {showAddCatalogForm ? (
                 <>
                   {/* Form Tambah Konsol Baru */}
@@ -497,14 +502,14 @@ export default function InventoryPage() {
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 bg-surface-container-highest px-6 py-4 border-t border-surface-container-low flex gap-3 justify-end">
+            <div className="sticky bottom-0 bg-surface-container-highest px-4 md:px-6 py-3 md:py-4 border-t border-surface-container-low flex flex-col sm:flex-row gap-2 md:gap-3 justify-end">
               <button
                 onClick={() => {
                   setShowAddModal(false);
                   setShowAddCatalogForm(false);
                   setNewCatalogName("");
                 }}
-                className="px-4 py-2 rounded-lg border border-surface-container-high text-on-surface hover:bg-surface-container transition-colors font-medium"
+                className="px-3 md:px-4 py-2 rounded-lg border border-surface-container-high text-on-surface hover:bg-surface-container transition-colors font-medium text-sm md:text-base"
                 disabled={isSubmitting}
               >
                 Batal
@@ -512,7 +517,7 @@ export default function InventoryPage() {
               {!showAddCatalogForm && (
                 <button
                   onClick={handleAddUnit}
-                  className="px-4 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors font-medium disabled:opacity-50"
+                  className="px-3 md:px-4 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors font-medium disabled:opacity-50 text-sm md:text-base"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Menambahkan..." : "Tambah Unit"}
@@ -525,10 +530,10 @@ export default function InventoryPage() {
 
       {/* Update Status Modal */}
       {showStatusModal && selectedInventory && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-4">
           <div className="bg-surface-container-lowest rounded-xl shadow-lg max-w-md w-full">
             {/* Header */}
-            <div className="bg-surface-container-highest px-6 py-4 border-b border-surface-container-low">
+            <div className="bg-surface-container-highest px-4 md:px-6 py-3 md:py-4 border-b border-surface-container-low">
               <h2 className="text-headline-md font-bold text-on-surface">
                 Ubah Status Mesin
               </h2>
@@ -538,7 +543,7 @@ export default function InventoryPage() {
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-3">
+            <div className="p-4 md:p-6 space-y-3">
               <p className="text-sm text-on-surface-variant mb-4">
                 Status saat ini: <strong>{selectedInventory.status}</strong>
               </p>
@@ -564,13 +569,13 @@ export default function InventoryPage() {
             </div>
 
             {/* Footer */}
-            <div className="bg-surface-container-highest px-6 py-4 border-t border-surface-container-low flex justify-end">
+            <div className="bg-surface-container-highest px-4 md:px-6 py-3 md:py-4 border-t border-surface-container-low flex justify-end">
               <button
                 onClick={() => {
                   setShowStatusModal(false);
                   setSelectedInventory(null);
                 }}
-                className="px-4 py-2 rounded-lg border border-surface-container-high text-on-surface hover:bg-surface-container transition-colors font-medium"
+                className="px-3 md:px-4 py-2 rounded-lg border border-surface-container-high text-on-surface hover:bg-surface-container transition-colors font-medium text-sm md:text-base"
                 disabled={isSubmitting}
               >
                 Tutup
