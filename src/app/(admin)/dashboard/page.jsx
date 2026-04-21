@@ -62,15 +62,6 @@ export default function DashboardPage() {
           }}
         />
 
-        <StatCard
-          title="Total Revenue"
-          value="Rp 45.2M"
-          icon={<MdPayments />}
-          subtitle={{
-            icon: <MdTrendingUp size={16} />,
-            text: 'Growth this month',
-          }}
-        />
 
         <StatCard
           title="Pending Verifications"
