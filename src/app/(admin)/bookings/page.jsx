@@ -43,18 +43,29 @@ export default function BookingsPage() {
 
     // Filter bookings based on status and search
     const filteredBookings = bookings.filter((booking) => {
-        // Status filter
+        // If there's a search query, prioritize search results (ignore status filter)
+        if (searchQuery.trim() !== '') {
+            const searchLower = searchQuery.toLowerCase();
+            const isMatch = (
+                booking.customerName.toLowerCase().includes(searchLower) ||
+                booking.whatsappNumber.toLowerCase().includes(searchLower)
+            );
+            return isMatch;
+        }
+        
+        // If no search, apply status filter
         const bookingStatus = mapStatus(booking.status);
         const statusMatch = statusFilter === 'all' || bookingStatus === statusFilter;
-
-        // Search filter - search by customer name or phone number
-        const searchLower = searchQuery.toLowerCase();
-        const searchMatch = 
-            booking.customerName.toLowerCase().includes(searchLower) ||
-            booking.whatsappNumber.includes(searchQuery);
-
-        return statusMatch && searchMatch;
+        return statusMatch;
     });
+
+    // Debug logging
+    console.log('Total bookings:', bookings.length);
+    console.log('Search query:', searchQuery);
+    console.log('Filtered bookings:', filteredBookings.length);
+    if (searchQuery) {
+        console.log('Filtered data:', filteredBookings.map(b => ({ name: b.customerName, status: b.status })));
+    }
 
   return (
     <>

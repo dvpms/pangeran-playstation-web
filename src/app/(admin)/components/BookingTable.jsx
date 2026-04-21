@@ -1,13 +1,15 @@
 "use client";
 
-import { MdFilterList, MdMoreVert, MdWhatsapp, MdCheck, MdClose } from "react-icons/md";
+import { MdFilterList, MdMoreVert, MdWhatsapp, MdCheck, MdClose, MdEdit, MdDelete, MdRefresh } from "react-icons/md";
 import { useState } from "react";
-import { updateBookingStatus } from "@/services/booking";
+import { updateBookingStatus, deleteBooking } from "@/services/booking";
 
 export default function BookingTable({ bookings: initialBookings = [] }) {
   const [bookings, setBookings] = useState(initialBookings);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(null);
 
   // Map database status to UI status
   const mapStatus = (dbStatus) => {
@@ -43,12 +45,37 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
           b.id === bookingId ? { ...b, status: newStatus } : b
         ));
         setSelectedBookingId(null);
+        setShowStatusModal(false);
       } else {
         alert("Gagal mengubah status: " + result.error);
       }
     } catch (error) {
       console.error("Error updating status:", error);
       alert("Terjadi kesalahan saat mengubah status");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Handle delete booking
+  const handleDeleteBooking = async (bookingId) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus booking ini?")) {
+      return;
+    }
+    
+    setIsUpdating(true);
+    try {
+      const result = await deleteBooking(bookingId);
+      if (result.success) {
+        // Remove from local state
+        setBookings(bookings.filter(b => b.id !== bookingId));
+        alert("Booking berhasil dihapus");
+      } else {
+        alert("Gagal menghapus booking: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      alert("Terjadi kesalahan saat menghapus booking");
     } finally {
       setIsUpdating(false);
     }
@@ -107,7 +134,7 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
   const displayData = transformedBookings;
 
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-8 overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-xl p-8 ">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-headline-lg font-bold text-on-surface">
@@ -188,34 +215,64 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
 
                 {/* Actions */}
                 <td className="py-4 px-4 text-right">
-                  <div className="relative group inline-block">
-                    <button className="text-primary hover:text-primary-container p-2 rounded-lg hover:bg-surface-container transition-colors">
-                      <MdMoreVert size={20} />
+                  <div className="flex justify-end items-center gap-2">
+
+                    {/* Update Status Button */}
+                    <button
+                      onClick={() => {
+                        setSelectedBookingId(booking.id);
+                        setShowStatusModal(true);
+                      }}
+                      className="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
+                      title="Update Status"
+                      disabled={isUpdating}
+                    >
+                      <MdEdit size={18} />
                     </button>
-                    
-                    {/* Dropdown Menu */}
-                    <div className="absolute right-0 mt-2 w-56 bg-surface-container rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                      <div className="p-3 border-b border-surface-container-high">
-                        <p className="text-xs font-medium text-on-surface-variant uppercase">Ubah Status</p>
-                      </div>
-                      
-                      <div className="max-h-48 overflow-y-auto">
-                        {statusOptions
-                          .filter(opt => opt.db !== booking.dbStatus)
-                          .map((option) => (
-                            <button
-                              key={option.db}
-                              onClick={() => handleStatusUpdate(booking.id, booking.dbStatus, option.db)}
-                              disabled={isUpdating}
-                              className="w-full text-left px-4 py-2.5 hover:bg-surface-container-high transition-colors text-sm text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <span className="text-xs text-on-surface-variant">{option.db}</span>
-                              <div className="font-medium">{option.label}</div>
-                            </button>
-                          ))}
+
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => handleDeleteBooking(booking.id)}
+                      className="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                      title="Delete Booking"
+                      disabled={isUpdating}
+                    >
+                      <MdDelete size={18} />
+                    </button>
+                  </div>
+
+                  {/* Status Update Modal */}
+                  {selectedBookingId === booking.id && showStatusModal && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]" onClick={() => setShowStatusModal(false)}>
+                      <div className="bg-surface-container-lowest rounded-2xl p-6 w-96 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                        <h3 className="text-headline-sm font-bold text-on-surface mb-4">Ubah Status Booking</h3>
+                        <p className="text-sm text-on-surface-variant mb-4">Pilih status baru untuk booking ini:</p>
+                        
+                        <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
+                          {statusOptions
+                            .filter(opt => opt.db !== booking.dbStatus)
+                            .map((option) => (
+                              <button
+                                key={option.db}
+                                onClick={() => handleStatusUpdate(booking.id, booking.dbStatus, option.db)}
+                                disabled={isUpdating}
+                                className="w-full text-left p-3 rounded-lg border border-surface-container-high hover:bg-surface-container hover:border-primary transition-colors text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <div className="font-medium text-sm">{option.label}</div>
+                                <div className="text-xs text-on-surface-variant">{option.db}</div>
+                              </button>
+                            ))}
+                        </div>
+                        
+                        <button
+                          onClick={() => setShowStatusModal(false)}
+                          className="w-full px-4 py-2 rounded-lg border border-surface-container-high hover:bg-surface-container transition-colors text-on-surface font-medium"
+                        >
+                          Batal
+                        </button>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </td>
               </tr>
             ))}

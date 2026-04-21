@@ -273,3 +273,21 @@ export async function updateBookingStatus(id, newStatus) {
     return { success: false, error: error.message };
   }
 }
+
+export async function deleteBooking(id) {
+  try {
+    // Delete associated booking items first
+    await prisma.bookingItem.deleteMany({
+      where: { bookingId: id },
+    });
+    
+    // Then delete the booking
+    await prisma.booking.delete({
+      where: { id },
+    });
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
