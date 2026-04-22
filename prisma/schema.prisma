@@ -37,20 +37,23 @@ model Inventory {
 }
 
 model Booking {
-  id             String        @id @default(uuid())
-  customerName   String?
-  whatsappNumber String
-  startDate      DateTime
-  endDate        DateTime
-  totalPrice     Decimal       @db.Decimal(10, 2)
-  status         BookingStatus @default(PENDING)
-  createdAt      DateTime      @default(now())
-  addonTv        Boolean       @default(false)
-  tierId         String
-  deliveryArea   String?
-  updatedAt      DateTime      @updatedAt
-  tier           PricingTier   @relation(fields: [tierId], references: [id])
-  items          BookingItem[]
+  id                   String        @id @default(uuid())
+  customerName         String?
+  whatsappNumber       String
+  startDate            DateTime
+  endDate              DateTime
+  totalPrice           Decimal       @db.Decimal(10, 2)
+  status               BookingStatus @default(PENDING)
+  createdAt            DateTime      @default(now())
+  addonTv              Boolean       @default(false)
+  tierId               String
+  deliveryArea         String?
+  jaminan              String?       // e.g., "KTP + STNK"
+  socialMediaType      String?       // e.g., "Instagram", "Twitter", "Facebook", "TikTok"
+  socialMediaUsername  String?       // e.g., "@username"
+  updatedAt            DateTime      @updatedAt
+  tier                 PricingTier   @relation(fields: [tierId], references: [id])
+  items                BookingItem[]
 }
 
 model BookingItem {

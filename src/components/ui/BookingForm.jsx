@@ -23,10 +23,13 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const [selectedTier, setSelectedTier] = useState(null);
   const [startDate, setStartDate] = useState(null);
 
-  // State Interaktif: Data Pelanggan (BARU)
+  // State Form
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [area, setArea] = useState(null);
+  const [jaminan, setJaminan] = useState(null);
+  const [socialMediaType, setSocialMediaType] = useState(null);
+  const [socialMediaUsername, setSocialMediaUsername] = useState("");
   // const [address, setAddress] = useState("");
 
   const [unavailableDates, setUnavailableDates] = useState([]);
@@ -89,7 +92,15 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const grandTotal = unitTotal + addonTotal;
 
   // Validasi Form Keseluruhan
-  const isFormValid = selectedTier && startDate && name && whatsapp && area;
+  const isFormValid =
+    selectedTier &&
+    startDate &&
+    name &&
+    whatsapp &&
+    area &&
+    jaminan &&
+    socialMediaType &&
+    socialMediaUsername;
 
   // Eksekutor Form
   const handleSubmit = async () => {
@@ -112,6 +123,9 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         customerName: name,
         whatsappNumber: whatsapp,
         deliveryArea: area.value,
+        jaminan: jaminan.value,
+        socialMediaType: socialMediaType.value,
+        socialMediaUsername: socialMediaUsername,
         // fullAddress: address,
         totalPrice: grandTotal,
         addonTv: selectedAddon,
@@ -128,6 +142,10 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         setName("");
         setWhatsapp("");
         setArea(null);
+        setJaminan(null);
+        setSocialMediaType(null);
+        setSocialMediaUsername("");
+
         // setAddress("");
 
         console.log("Booking berhasil dibuat:", result.booking);
@@ -315,7 +333,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   type="button"
                   disabled={isFull || isLoadingDates}
                   onClick={() => setStartDate(date)}
-                  className={`min-w-[4.5rem] p-3 rounded-xl flex flex-col items-center justify-center transition-all border ${
+                  className={`min-w-18 p-3 rounded-xl flex flex-col items-center justify-center transition-all border ${
                     isFull
                       ? "bg-surface-container-lowest border-outline-variant/10 opacity-30 cursor-not-allowed"
                       : isSelected
@@ -382,21 +400,72 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                 />
               </div>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Jenis Media Sosial
+                </label>
+                <Select
+                  instanceId="socialmedia-type-select"
+                  options={[
+                    { value: "Instagram", label: "Instagram" },
+                    { value: "Twitter", label: "Twitter" },
+                    { value: "Facebook", label: "Facebook" },
+                    { value: "TikTok", label: "TikTok" },
+                  ]}
+                  value={socialMediaType}
+                  onChange={(opt) => setSocialMediaType(opt)}
+                  placeholder="Pilih Jenis Media Sosial..."
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Username Media Sosial
+                </label>
+                <input
+                  type="text"
+                  value={socialMediaUsername}
+                  onChange={(e) => setSocialMediaUsername(e.target.value)}
+                  placeholder="Contoh: @username_anda"
+                  className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-transparent focus:border-primary"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Dokumen Jaminan
+                </label>
+                <Select
+                  instanceId="jaminan-select"
+                  options={[
+                    { value: "KTP + STNK", label: "KTP + STNK" },
+                    { value: "SIM + STNK", label: "SIM + STNK" },
+                    { value: "KTP + SIM", label: "KTP + SIM" },
+                  ]}
+                  value={jaminan}
+                  onChange={(opt) => setJaminan(opt)}
+                  placeholder="Pilih Dokumen Jaminan..."
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-surface-on">
-                Area Layanan
-              </label>
-              <Select
-                instanceId="area-select"
-                options={areaOptions}
-                value={area}
-                onChange={(opt) => setArea(opt)}
-                placeholder="Pilih Area Layanan Anda..."
-                className="react-select-container"
-                classNamePrefix="react-select"
-                isSearchable
-              />
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Area Layanan
+                </label>
+                <Select
+                  instanceId="area-select"
+                  options={areaOptions}
+                  value={area}
+                  onChange={(opt) => setArea(opt)}
+                  placeholder="Pilih Area Layanan Anda..."
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  isSearchable
+                />
+              </div>
             </div>
 
             {/* <div className="flex flex-col gap-2">

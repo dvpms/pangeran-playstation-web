@@ -126,6 +126,9 @@ export async function submitBooking(payload) {
           // fullAddress: payload.fullAddress,
           totalPrice: payload.totalPrice,
           addonTv: payload.addonTv,
+          jaminan: payload.jaminan,
+          socialMediaType: payload.socialMediaType,
+          socialMediaUsername: payload.socialMediaUsername,
           status: "PENDING",
         },
       });
@@ -184,6 +187,14 @@ export async function submitBooking(payload) {
               <tr>
                 <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Area</td>
                 <td style="padding: 10px 16px;">${payload.deliveryArea}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Dokumen Jaminan</td>
+                <td style="padding: 10px 16px;">${payload.jaminan || "-"}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Media Sosial</td>
+                <td style="padding: 10px 16px;">${payload.socialMediaType} - @${payload.socialMediaUsername}</td>
               </tr>
               <tr>
                 <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Total Harga</td>
