@@ -101,6 +101,15 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
       const end = new Date(startDate);
       if (selectedTier.duration === "2d") end.setDate(end.getDate() + 1);
       if (selectedTier.duration === "3d") end.setDate(end.getDate() + 2);
+      if (!whatsapp.startsWith("62")) {
+        Swal.fire({
+          icon: "error",
+          title: "Nomor WhatsApp tidak valid",
+          text: "Nomor harus diawali 62 (contoh: 6281234567890)",
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
       const payload = {
         catalogId: selectedUnit.id,
@@ -132,29 +141,29 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
 
         console.log("Booking berhasil dibuat:", result.booking);
         Swal.fire({
-          icon: 'success',
-          title: 'Sukses!',
-          text: 'Booking berhasil dibuat! Anda akan segera dihubungi admin kami.',
+          icon: "success",
+          title: "Sukses!",
+          text: "Booking berhasil dibuat! Anda akan segera dihubungi admin kami.",
         });
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: result.message || 'Terjadi kesalahan saat membuat booking.',
+          icon: "error",
+          title: "Error!",
+          text: result.message || "Terjadi kesalahan saat membuat booking.",
         });
       }
     } catch (error) {
       console.error(error);
       Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'Terjadi kesalahan jaringan.',
+        icon: "error",
+        title: "Error!",
+        text: "Terjadi kesalahan jaringan.",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
       {/* Kolom Kiri: Form Input */}
@@ -380,6 +389,11 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   placeholder="Contoh: 6281234567890"
                   className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-primary/20 focus:border-primary"
                 />
+                {whatsapp && !whatsapp.startsWith("62") && (
+                  <span className="text-xs text-red-500 mt-1 font-bold">
+                    * Nomor harus diawali 62
+                  </span>
+                )}
               </div>
             </div>
 
@@ -466,12 +480,13 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-2 pb-2 border-b">
             <p className="text-surface-on/80 font-bold">Total Harga</p>
             <p className="text-3xl font-extrabold text-secondary">
               {formatRupiah(grandTotal)}
             </p>
           </div>
+          <p className="text-sm text-surface-on/60 mb-8">* Belum termasuk ongkir</p>
 
           <button
             onClick={handleSubmit}
@@ -480,7 +495,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
           >
             {isSubmitting ? (
               <>
-               <FaSpinner className="animate-spin text-primary" />
+                <FaSpinner className="animate-spin text-primary" />
                 Memproses...
               </>
             ) : (
