@@ -129,6 +129,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         // fullAddress: address,
         totalPrice: grandTotal,
         addonTv: selectedAddon,
+        tvCatalog: selectedAddon && tvAddon ? tvAddon.id : null,
       };
 
       const result = await submitBooking(payload);

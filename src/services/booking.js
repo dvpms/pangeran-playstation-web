@@ -111,6 +111,36 @@ export async function submitBooking(payload) {
       };
     }
 
+    let availableTv = null;
+    if (payload.addonTv && payload.tvCatalogId) {
+      availableTv = await prisma.inventory.findFirst({
+        where: {
+          catalogId: payload.tvCatalogId, // Cari spesifik TV
+          status: "AVAILABLE",
+          bookingItems: {
+            none: {
+              booking: {
+                status: {
+                  in: ["PENDING", "WAITING_PAYMENT", "CONFIRMED", "ACTIVE"],
+                },
+                startDate: { lte: new Date(payload.endDate) },
+                endDate: { gte: new Date(payload.startDate) },
+              },
+            },
+          },
+        },
+      });
+
+      // Jika user minta TV tapi TV-nya habis, TOLAK pesanannya
+      if (!availableTv) {
+        return {
+          success: false,
+          message:
+            "Gagal: Add-on TV sudah disewa orang lain pada tanggal tersebut. Silakan matikan Add-on TV atau pilih tanggal lain.",
+        };
+      }
+    }
+
     // 2. Eksekusi Penyimpanan secara Atomik (Database Transaction)
     // Jika salah satu proses gagal, semua dibatalkan otomatis (Rollback)
     const newBooking = await prisma.$transaction(async (tx) => {
@@ -140,6 +170,12 @@ export async function submitBooking(payload) {
           inventoryId: availableUnit.id,
         },
       });
+
+      if (availableTv) {
+        await tx.bookingItem.create({
+          data: { bookingId: booking.id, inventoryId: availableTv.id },
+        });
+      }
 
       return booking;
     });
@@ -291,12 +327,12 @@ export async function deleteBooking(id) {
     await prisma.bookingItem.deleteMany({
       where: { bookingId: id },
     });
-    
+
     // Then delete the booking
     await prisma.booking.delete({
       where: { id },
     });
-    
+
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
