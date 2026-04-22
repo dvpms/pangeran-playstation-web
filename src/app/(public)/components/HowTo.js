@@ -1,5 +1,6 @@
 import Container from "@/components/ui/Container";
 import { MdChecklist, MdOutlineSupportAgent, MdDeliveryDining } from "react-icons/md";
+import { ScrollReveal, StaggerContainer } from "@/components/animations";
 
 // src/components/HowTo.jsx
 
@@ -36,20 +37,20 @@ export default function HowTo() {
       <Container>
         <div className="max-w-7xl mx-auto px-8">
           {/* Header Section */}
-          <div className="text-center max-w-2xl mx-auto mb-5 md:mb-20">
+          <ScrollReveal animation="fadeInUp" duration={0.6} className="text-center max-w-2xl mx-auto mb-5 md:mb-20">
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-surface-on mb-4">
               Cara Booking Mudah
             </h2>
             <p className="text-surface-on/80 text-sm md:text-lg">
               Tanpa ribet, cukup selesaikan pemesanan melalui website kami.
             </p>
-          </div>
+          </ScrollReveal>
 
           {/* Steps Grid */}
           <div className="relative max-w-5xl mx-auto">
             <div className="hidden md:block absolute top-10 left-[15%] w-[70%] h-0.5 border-t-2 border-dashed border-primary/20 z-0"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-12">
+            <StaggerContainer staggerDelay={0.15} duration={0.5} className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-12">
               {steps.map((step) => (
                 <div
                   key={step.id}
@@ -72,7 +73,7 @@ export default function HowTo() {
                   <p className="text-sm text-surface-on/80 px-4">{step.desc}</p>
                 </div>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </div>
       </Container>
