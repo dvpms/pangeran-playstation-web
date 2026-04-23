@@ -183,7 +183,7 @@ export async function submitBooking(payload) {
     // 3. Format isi email
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: "akuncoding18@gmail.com",
+      to: "pangeranplaystation@gmail.com",
       subject: "Konfirmasi Booking Baru",
       text: `Ada booking baru!`, // fallback
       html: `
