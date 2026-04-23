@@ -36,7 +36,6 @@ export default function InventoryPage() {
       try {
         const data = await getInventory();
         setCatalogs(data || []);
-        console.log("Fetched inventory data:", data);
       } catch (error) {
         console.error("Failed to fetch inventory:", error);
         Swal.fire({

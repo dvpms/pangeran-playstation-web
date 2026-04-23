@@ -9,7 +9,6 @@ import { getAllBookings } from '@/services/booking';
 export default function DashboardPage() {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log('DashboardPage bookings:', bookings);
 
   useEffect(() => {
     const fetchBookings = async () => {

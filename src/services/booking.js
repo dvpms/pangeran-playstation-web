@@ -111,6 +111,13 @@ export async function submitBooking(payload) {
       };
     }
 
+    if (payload.addonTv && !payload.tvCatalogId) {
+      return {
+        success: false,
+        message: "Sistem mendeteksi anomali: Data ID TV tidak ditemukan dalam request payload Anda.",
+      };
+    }
+
     let availableTv = null;
     if (payload.addonTv && payload.tvCatalogId) {
       availableTv = await prisma.inventory.findFirst({
@@ -121,7 +128,7 @@ export async function submitBooking(payload) {
             none: {
               booking: {
                 status: {
-                  in: ["PENDING", "WAITING_PAYMENT", "CONFIRMED", "ACTIVE"],
+                  in: ["PENDING", "CONFIRMED", "ACTIVE"],
                 },
                 startDate: { lte: new Date(payload.endDate) },
                 endDate: { gte: new Date(payload.startDate) },
@@ -173,7 +180,9 @@ export async function submitBooking(payload) {
 
       if (availableTv) {
         await tx.bookingItem.create({
-          data: { bookingId: booking.id, inventoryId: availableTv.id },
+          data: {
+            bookingId: booking.id, 
+            inventoryId: availableTv.id },
         });
       }
 
