@@ -16,43 +16,51 @@ import Swal from "sweetalert2";
 export default function BookingForm({ initialConsoles, initialAddons }) {
   const defaultConsole = initialConsoles.length > 0 ? initialConsoles[0] : null;
   const tvAddon = initialAddons.length > 0 ? initialAddons[0] : null;
-
   // State Interaktif: Produk
   const [selectedUnit, setSelectedUnit] = useState(defaultConsole);
   const [selectedAddon, setSelectedAddon] = useState(false);
   const [selectedTier, setSelectedTier] = useState(null);
   const [startDate, setStartDate] = useState(null);
 
-  // State Interaktif: Data Pelanggan (BARU)
+  // State Form
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [area, setArea] = useState(null);
+  const [jaminan, setJaminan] = useState(null);
+  const [socialMediaType, setSocialMediaType] = useState(null);
+  const [socialMediaUsername, setSocialMediaUsername] = useState("");
   // const [address, setAddress] = useState("");
 
   const [unavailableDates, setUnavailableDates] = useState([]);
+  const [unavailableTvDates, setUnvailableTvDates] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingDates, setIsLoadingDates] = useState(false);
 
   // Efek Samping: Cek database setiap kali unit dipilih/diganti
-  useEffect(() => {
-    async function fetchDates() {
-      if (!selectedUnit) return;
+  const fetchDates = async () => {
+    if (!selectedUnit) return;
 
-      setStartDate(null); // Reset pilihan tanggal jika unit diganti
-      setIsLoadingDates(true);
+    setStartDate(null); // Reset pilihan tanggal jika unit diganti
+    setSelectedAddon(false); // Reset addon jika unit diganti
+    setIsLoadingDates(true);
 
-      try {
-        const bookedDates = await getUnavailableDates(selectedUnit.id);
-        setUnavailableDates(bookedDates);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoadingDates(false);
-      }
+    try {
+      const [bookedDates, bookedTvDates] = await Promise.all([
+        getUnavailableDates(selectedUnit.id),
+        tvAddon ? getUnavailableDates(tvAddon.id) : Promise.resolve([]),
+      ]);
+      setUnavailableDates(bookedDates);
+      setUnvailableTvDates(bookedTvDates);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingDates(false);
     }
+  };
 
+  useEffect(() => {
     fetchDates();
-  }, [selectedUnit]);
+  }, [selectedUnit, tvAddon]);
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -89,7 +97,15 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const grandTotal = unitTotal + addonTotal;
 
   // Validasi Form Keseluruhan
-  const isFormValid = selectedTier && startDate && name && whatsapp && area;
+  const isFormValid =
+    selectedTier &&
+    startDate &&
+    name &&
+    whatsapp &&
+    area &&
+    jaminan &&
+    socialMediaType &&
+    socialMediaUsername;
 
   // Eksekutor Form
   const handleSubmit = async () => {
@@ -102,6 +118,16 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
       if (selectedTier.duration === "2d") end.setDate(end.getDate() + 1);
       if (selectedTier.duration === "3d") end.setDate(end.getDate() + 2);
 
+      if (!whatsapp.startsWith("62")) {
+        Swal.fire({
+          icon: "error",
+          title: "Nomor WhatsApp tidak valid",
+          text: "Nomor harus diawali 62 (contoh: 6281234567890)",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const payload = {
         catalogId: selectedUnit.id,
         unitName: selectedUnit.name,
@@ -112,9 +138,13 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         customerName: name,
         whatsappNumber: whatsapp,
         deliveryArea: area.value,
+        jaminan: jaminan.value,
+        socialMediaType: socialMediaType.value,
+        socialMediaUsername: socialMediaUsername,
         // fullAddress: address,
         totalPrice: grandTotal,
         addonTv: selectedAddon,
+        tvCatalogId: selectedAddon && tvAddon ? tvAddon.id : null,
       };
 
       const result = await submitBooking(payload);
@@ -128,33 +158,38 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         setName("");
         setWhatsapp("");
         setArea(null);
+        setJaminan(null);
+        setSocialMediaType(null);
+        setSocialMediaUsername("");
+
         // setAddress("");
 
-        console.log("Booking berhasil dibuat:", result.booking);
         Swal.fire({
-          icon: 'success',
-          title: 'Sukses!',
-          text: 'Booking berhasil dibuat! Anda akan segera dihubungi admin kami.',
+          icon: "success",
+          title: "Sukses!",
+          text: "Booking berhasil dibuat! Anda akan segera dihubungi admin kami.",
         });
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: result.message || 'Terjadi kesalahan saat membuat booking.',
+          icon: "error",
+          title: "Error!",
+          text: result.message || "Terjadi kesalahan saat membuat booking.",
         });
       }
+
+      fetchDates(); // Refresh tanggal yang tidak tersedia setelah booking baru dibuat
     } catch (error) {
       console.error(error);
       Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'Terjadi kesalahan jaringan.',
+        icon: "error",
+        title: "Error!",
+        text: "Terjadi kesalahan jaringan.",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
       {/* Kolom Kiri: Form Input */}
@@ -253,39 +288,80 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         </section>
 
         {/* Section 3: Add-on */}
-        {tvAddon && (
-          <section>
-            <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
-              <FaTv className="text-primary w-10 h-10" />
-              Pilih Add-on
-            </h3>
-            <div
-              onClick={() => setSelectedAddon(!selectedAddon)}
-              className={`p-4 md:p-6 rounded-2xl cursor-pointer transition-all border-2 flex items-center justify-between gap-4 ${
-                selectedAddon
-                  ? "border-secondary bg-secondary-container/10 shadow-ambient-blue"
-                  : "border-outline-variant/20 bg-surface-container-lowest hover:border-secondary/50"
-              }`}
-            >
-              <div>
-                <h4 className="font-bold text-surface-on text-lg">
-                  {tvAddon.name}
-                </h4>
-                <p className="font-extrabold text-secondary">
-                  + {formatRupiah(tvPrice)}{" "}
-                  <span className="text-sm font-normal text-surface-on/60">
-                    /Sewa
-                  </span>
-                </p>
-              </div>
-              <button
-                className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${selectedAddon ? "bg-secondary text-white" : "bg-surface-container text-surface-on hover:bg-surface-container-low"}`}
-              >
-                {selectedAddon ? "Ditambahkan" : "Tambah"}
-              </button>
-            </div>
-          </section>
-        )}
+        {tvAddon &&
+          (() => {
+            // Logika Pengecekan Ketersediaan TV pada Tanggal Terpilih
+            const selectedDateStr = startDate
+              ? startDate.toLocaleDateString("en-CA")
+              : null;
+            const isTvFull =
+              unavailableTvDates.includes("ALL") ||
+              unavailableTvDates.includes(selectedDateStr);
+
+            // Auto-uncheck jika user sudah terlanjur centang TV lalu pindah ke tanggal yang TV-nya penuh
+            if (isTvFull && selectedAddon) {
+              setSelectedAddon(false);
+            }
+
+            return (
+              <section>
+                <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
+                  <FaTv className="text-primary w-10 h-10" />
+                  Pilih Add-on
+                </h3>
+
+                <div
+                  onClick={() => {
+                    if (!isTvFull) setSelectedAddon(!selectedAddon);
+                  }}
+                  className={`p-4 md:p-6 rounded-2xl transition-all border-2 flex items-center justify-between gap-4 relative overflow-hidden ${
+                    isTvFull
+                      ? "border-outline-variant/10 bg-surface-container-lowest opacity-50 cursor-not-allowed grayscale"
+                      : selectedAddon
+                        ? "border-secondary bg-secondary-container/10 shadow-ambient-blue cursor-pointer"
+                        : "border-outline-variant/20 bg-surface-container-lowest hover:border-secondary/50 cursor-pointer"
+                  }`}
+                >
+                  <div>
+                    <h4 className="font-bold text-surface-on text-lg">
+                      {tvAddon.name}
+                    </h4>
+                    <p
+                      className={`font-extrabold ${isTvFull ? "text-surface-on/40" : "text-secondary"}`}
+                    >
+                      + {formatRupiah(tvPrice)}{" "}
+                      <span className="text-sm font-normal text-surface-on/60">
+                        /Sewa
+                      </span>
+                    </p>
+                  </div>
+
+                  <button
+                    disabled={isTvFull}
+                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+                      isTvFull
+                        ? "bg-surface-container text-error/60"
+                        : selectedAddon
+                          ? "bg-secondary text-white"
+                          : "bg-surface-container text-surface-on hover:bg-surface-container-low"
+                    }`}
+                  >
+                    {isTvFull
+                      ? "Stok Habis"
+                      : selectedAddon
+                        ? "Ditambahkan"
+                        : "Tambah"}
+                  </button>
+                </div>
+                  {isTvFull && (
+                    <p className="text-xs text-red-500 mt-2 font-medium text-right">
+                      *Unit TV sudah disewa oleh pelanggan lain pada tanggal
+                      yang Anda pilih.
+                    </p>
+                  )}
+              </section>
+            );
+          })()}
 
         {/* Section 4: Kalender */}
         <section>
@@ -315,7 +391,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   type="button"
                   disabled={isFull || isLoadingDates}
                   onClick={() => setStartDate(date)}
-                  className={`min-w-[4.5rem] p-3 rounded-xl flex flex-col items-center justify-center transition-all border ${
+                  className={`min-w-18 p-3 rounded-xl flex flex-col items-center justify-center transition-all border ${
                     isFull
                       ? "bg-surface-container-lowest border-outline-variant/10 opacity-30 cursor-not-allowed"
                       : isSelected
@@ -378,25 +454,87 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   min="0"
                   onChange={(e) => setWhatsapp(e.target.value)}
                   placeholder="Contoh: 6281234567890"
-                  className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-primary/20 focus:border-primary"
+                  className={`w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 
+                    ${whatsapp && !whatsapp.startsWith("62") ? "border-2 border-red-500 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500" : "focus:outline-none focus:ring-2 focus:ring-primary/50 border border-primary/20 focus:border-primary"}`}
                 />
+                {whatsapp && !whatsapp.startsWith("62") && (
+                  <span className="text-xs underline- text-red-500 font-bold mt-1">
+                    Nomor harus diawali 62 (contoh: 6281234567890)
+                  </span>
+                )}
+                {whatsapp && whatsapp.length < 12 && (
+                  <span className="text-xs underline- text-red-500 font-bold mt-1">
+                    Nomor tidak valid
+                  </span>
+                )}
               </div>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Jenis Media Sosial
+                </label>
+                <Select
+                  instanceId="socialmedia-type-select"
+                  options={[
+                    { value: "Instagram", label: "Instagram" },
+                    { value: "Twitter", label: "Twitter" },
+                    { value: "Facebook", label: "Facebook" },
+                    { value: "TikTok", label: "TikTok" },
+                  ]}
+                  value={socialMediaType}
+                  onChange={(opt) => setSocialMediaType(opt)}
+                  placeholder="Pilih Jenis Media Sosial..."
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Username Media Sosial
+                </label>
+                <input
+                  type="text"
+                  value={socialMediaUsername}
+                  onChange={(e) => setSocialMediaUsername(e.target.value)}
+                  placeholder="Contoh: @username_anda"
+                  className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-transparent focus:border-primary"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Dokumen Jaminan
+                </label>
+                <Select
+                  instanceId="jaminan-select"
+                  options={[
+                    { value: "KTP + STNK", label: "KTP + STNK" },
+                    { value: "SIM + STNK", label: "SIM + STNK" },
+                    { value: "KTP + SIM", label: "KTP + SIM" },
+                  ]}
+                  value={jaminan}
+                  onChange={(opt) => setJaminan(opt)}
+                  placeholder="Pilih Dokumen Jaminan..."
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-surface-on">
-                Area Layanan
-              </label>
-              <Select
-                instanceId="area-select"
-                options={areaOptions}
-                value={area}
-                onChange={(opt) => setArea(opt)}
-                placeholder="Pilih Area Layanan Anda..."
-                className="react-select-container"
-                classNamePrefix="react-select"
-                isSearchable
-              />
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Area Layanan
+                </label>
+                <Select
+                  instanceId="area-select"
+                  options={areaOptions}
+                  value={area}
+                  onChange={(opt) => setArea(opt)}
+                  placeholder="Pilih Area Layanan Anda..."
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  isSearchable
+                />
+              </div>
             </div>
 
             {/* <div className="flex flex-col gap-2">
@@ -466,13 +604,15 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-2 border-b border-gray pb-4">
             <p className="text-surface-on/80 font-bold">Total Harga</p>
             <p className="text-3xl font-extrabold text-secondary">
               {formatRupiah(grandTotal)}
             </p>
           </div>
-
+          <div className="text-xs text-surface-on/60 mb-6">
+            <span>*Belum termasuk Ongkir</span>
+          </div>
           <button
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
@@ -480,7 +620,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
           >
             {isSubmitting ? (
               <>
-               <FaSpinner className="animate-spin text-primary" />
+                <FaSpinner className="animate-spin text-primary" />
                 Memproses...
               </>
             ) : (
