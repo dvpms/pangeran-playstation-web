@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 5211",
+    "dev": "next dev --turbo -p 5211",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "postinstall": "prisma generate && prisma migrate deploy && prisma db seed"
+    "postinstall": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
