@@ -10,7 +10,7 @@ export default function TopBar() {
   const { toggleMobileDrawer } = useMenu();
 
   return (
-    <header className="fixed top-0 left-0 md:right-0 md:left-auto w-full md:w-[calc(100%-18rem)] h-16 md:h-20 z-40 bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg flex items-center justify-between px-4 md:px-10 shadow-none bg-sky-50 dark:bg-sky-900/10 font-['Plus_Jakarta_Sans'] text-sm font-semibold">
+    <header className="fixed top-0 left-0 md:right-0 md:left-auto w-full md:w-[calc(100%-18rem)] h-16 md:h-20 z-40 bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg flex items-center justify-between px-4 md:px-10 shadow-none bg-sky-50 dark:bg-sky-900/10 font-sans text-sm font-semibold">
       {/* Left: Search Bar - Hidden on Mobile */}
       <div className="flex items-center flex-1 hidden md:flex">
         <div className="relative w-full max-w-md focus-within:ring-2 focus-within:ring-sky-200 dark:focus-within:ring-sky-800 rounded-full transition-all">

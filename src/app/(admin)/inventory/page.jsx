@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   MdFilterList,
   MdCheckCircle,
@@ -11,14 +11,16 @@ import {
   MdEdit,
   MdDelete,
 } from "react-icons/md";
-import { getInventory, addPhysicalUnit, updateUnitStatus, deletePhysicalUnit, addCatalog } from "@/services/inventory";
+import { useQueryClient } from "@tanstack/react-query";
+import { addPhysicalUnit, updateUnitStatus, deletePhysicalUnit, addCatalog } from "@/services/inventory";
+import { useInventory } from "@/hooks/useInventory";
 import PageHeader from "../components/PageHeader";
 import StatCard from "../components/StatCard";
 import Swal from "sweetalert2";
 
 export default function InventoryPage() {
-  const [catalogs, setCatalogs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: catalogs = [], isLoading } = useInventory();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState(null);
@@ -30,27 +32,7 @@ export default function InventoryPage() {
   const [showAddCatalogForm, setShowAddCatalogForm] = useState(false);
   const [newCatalogName, setNewCatalogName] = useState("");
 
-  // Fetch inventory data on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getInventory();
-        setCatalogs(data || []);
-      } catch (error) {
-        console.error("Failed to fetch inventory:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Gagal memuat data inventaris. Silakan coba lagi nanti.",
-        });
-        setCatalogs([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const refreshInventory = () => queryClient.invalidateQueries({ queryKey: ['inventory'] });
 
   // Handle add new catalog
   const handleAddCatalog = async () => {
@@ -75,9 +57,7 @@ export default function InventoryPage() {
         setNewCatalogName("");
         setShowAddCatalogForm(false);
         setNewUnit({ ...newUnit, catalogId: result.data.id });
-        // Refresh data
-        const data = await getInventory();
-        setCatalogs(data || []);
+        refreshInventory();
       } else {
         Swal.fire({
           icon: "error",
@@ -119,9 +99,7 @@ export default function InventoryPage() {
         });
         setNewUnit({ catalogId: "", serialCode: "" });
         setShowAddModal(false);
-        // Refresh data
-        const data = await getInventory();
-        setCatalogs(data || []);
+        refreshInventory();
       } else {
         Swal.fire({
           icon: "error",
@@ -156,9 +134,7 @@ export default function InventoryPage() {
         });
         setShowStatusModal(false);
         setSelectedInventory(null);
-        // Refresh data
-        const data = await getInventory();
-        setCatalogs(data || []);
+        refreshInventory();
       } else {
         Swal.fire({
           icon: "error",
@@ -195,14 +171,8 @@ export default function InventoryPage() {
     try {
       const result = await deletePhysicalUnit(inventoryId);
       if (result.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil!",
-          text: "Unit mesin berhasil dihapus",
-        });
-        // Refresh data
-        const data = await getInventory();
-        setCatalogs(data || []);
+        Swal.fire({ icon: "success", title: "Berhasil!", text: "Unit mesin berhasil dihapus" });
+        refreshInventory();
       } else {
         Swal.fire({
           icon: "error",

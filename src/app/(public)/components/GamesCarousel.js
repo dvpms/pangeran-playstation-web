@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState } from "react";
 import GamesCard from "@/components/ui/GamesCard";
 import { HoverScale } from "@/components/animations";
-import { motion } from "framer-motion";
 
 export default function GamesCarousel({ items = [] }) {
   const ref = useRef(null);

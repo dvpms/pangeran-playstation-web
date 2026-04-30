@@ -1,4 +1,3 @@
-// src/app/(admin)/login/page.jsx
 "use client";
 
 import { useState } from "react";
@@ -113,7 +112,7 @@ export default function AdminLogin() {
               </div>
             </div>
             <button
-              className="w-full py-4 mt-8 bg-secondary-container hover:bg-[#ebd06b] text-on-secondary-container font-bold text-base rounded-full tracking-wide transition-all duration-300 shadow-sm active:scale-[0.98] flex justify-center items-center gap-2"
+              className="w-full py-4 mt-8 bg-secondary-container hover:bg-secondary text-on-secondary-container font-bold text-base rounded-full tracking-wide transition-all duration-300 shadow-sm active:scale-[0.98] flex justify-center items-center gap-2"
               type="submit"
               disabled={isLoading}
             >
