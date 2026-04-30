@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
-import { convertDecimals } from "@/lib/convertDecimal";
 import BookingForm from "@/components/ui/BookingForm";
 
 export const metadata = {
   title: "Booking Home Service | Pangeran Playstation",
 };
+
+const toPlain = (data) => JSON.parse(JSON.stringify(data));
 
 export default async function BookingPage() {
   const consoles = await prisma.catalog.findMany({
@@ -33,8 +34,8 @@ export default async function BookingPage() {
         </div>
 
         <BookingForm
-          initialConsoles={convertDecimals(consoles)}
-          initialAddons={convertDecimals(addons)}
+          initialConsoles={toPlain(consoles)}
+          initialAddons={toPlain(addons)}
         />
       </div>
     </div>
