@@ -1,4 +1,3 @@
-// src/app/actions/booking.js
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -326,6 +325,7 @@ export async function updateBookingStatus(id, newStatus) {
     });
     return { success: true };
   } catch (error) {
+    console.error("Gagal update status booking:", error);
     return { success: false, error: error.message };
   }
 }

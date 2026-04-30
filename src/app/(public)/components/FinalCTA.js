@@ -1,6 +1,4 @@
 import Container from "@/components/ui/Container";
-
-// src/components/FinalCta.jsx
 import Image from "next/image";
 import Link from "next/link";
 import { MdArrowForward } from "react-icons/md";

@@ -1,4 +1,3 @@
-// src/app/actions/inventory.js
 "use server";
 
 import { convertDecimals } from "@/lib/convertDecimal";
@@ -83,6 +82,7 @@ export async function deletePhysicalUnit(inventoryId) {
     return { success: true };
     
   } catch (error) {
+    console.error("Gagal hapus unit:", error);
     return { success: false, message: "Gagal menghapus unit. Pastikan unit tidak sedang disewa." };
   }
 }

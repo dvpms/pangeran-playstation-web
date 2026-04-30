@@ -1,4 +1,3 @@
-// src/app/(public)/booking/page.jsx
 import { prisma } from "@/lib/prisma";
 import BookingForm from "@/components/ui/BookingForm";
 
@@ -6,36 +5,20 @@ export const metadata = {
   title: "Booking Home Service | Pangeran Playstation",
 };
 
+const toPlain = (data) => JSON.parse(JSON.stringify(data));
+
 export default async function BookingPage() {
-  // Ambil data konsol beserta paket harganya
-
-  function serializeDecimal(obj) {
-  return JSON.parse(JSON.stringify(obj, (key, value) =>
-    typeof value === 'object' && value !== null && value.constructor.name === 'Decimal'
-      ? value.toString()
-      : value
-  ));
-}
-
   const consoles = await prisma.catalog.findMany({
     where: { type: "CONSOLE" },
     include: {
-      tiers: {
-        orderBy: { price: "asc" }, // Urutkan dari paket termurah (12 Jam)
-      },
+      tiers: { orderBy: { price: "asc" } },
     },
   });
 
-  // Ambil data addon (TV) beserta harganya
   const addons = await prisma.catalog.findMany({
     where: { type: "ADDON" },
-    include: {
-      tiers: true,
-    },
+    include: { tiers: true },
   });
-
-  const consolesPlain = serializeDecimal(consoles);
-  const addonsPlain = serializeDecimal(addons);
 
   return (
     <div className="min-h-screen bg-surface pt-12 pb-24">
@@ -50,7 +33,10 @@ export default async function BookingPage() {
           </p>
         </div>
 
-        <BookingForm initialConsoles={consolesPlain} initialAddons={addonsPlain} />
+        <BookingForm
+          initialConsoles={toPlain(consoles)}
+          initialAddons={toPlain(addons)}
+        />
       </div>
     </div>
   );
