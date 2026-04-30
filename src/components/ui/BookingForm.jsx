@@ -96,7 +96,16 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const addonTotal = selectedAddon ? tvPrice : 0;
   const grandTotal = unitTotal + addonTotal;
 
-  // Validasi Form Keseluruhan
+  const handleSocialMediaUsernameChange = (e) => {
+    const value = e.target.value;
+    if (value === "" || value === "@") {
+      setSocialMediaUsername("@");
+      return;
+    }
+    setSocialMediaUsername(value.startsWith("@") ? value : `@${value}`);
+  };
+
+  const isUsernameValid = socialMediaUsername.length > 1 && /^@[\w.]+$/.test(socialMediaUsername);
   const isFormValid =
     selectedTier &&
     startDate &&
@@ -105,7 +114,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
     area &&
     jaminan &&
     socialMediaType &&
-    socialMediaUsername;
+    isUsernameValid;
 
   // Eksekutor Form
   const handleSubmit = async () => {
@@ -496,10 +505,19 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                 <input
                   type="text"
                   value={socialMediaUsername}
-                  onChange={(e) => setSocialMediaUsername(e.target.value)}
+                  onChange={handleSocialMediaUsernameChange}
                   placeholder="Contoh: @username_anda"
-                  className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-transparent focus:border-primary"
+                  className={`w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 border ${
+                    socialMediaUsername && socialMediaUsername.length > 1 && !isUsernameValid
+                      ? "border-2 border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : "border-transparent focus:ring-primary/50 focus:border-primary"
+                  }`}
                 />
+                {socialMediaUsername && socialMediaUsername.length > 1 && !isUsernameValid && (
+                  <span className="text-xs text-red-500 font-bold mt-1">
+                    Username harus diawali @ dan hanya boleh huruf, angka, titik, atau underscore
+                  </span>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-surface-on">
