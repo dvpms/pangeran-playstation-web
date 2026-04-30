@@ -3,7 +3,7 @@ import { MdWhatsapp } from "react-icons/md";
 
 export default function WhatsAppFloatingButton({
   phone = "+6285776172812",
-  message = "Halo, saya ingin bertanya.",
+  message = "Halo, saya mau tanya soal booking dan produknya dund"
 }) {
   const phoneDigits = phone.replace(/\D/g, "");
   const href = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
