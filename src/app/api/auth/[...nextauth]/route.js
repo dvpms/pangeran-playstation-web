@@ -1,9 +1,13 @@
 // src/app/api/auth/[...nextauth]/route.js
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import _NextAuth from "next-auth";
+import _Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
+
+// Handle ESM/CJS interop — next-auth v4 ships CJS, project uses "type": "module"
+const NextAuth = _NextAuth.default ?? _NextAuth;
+const CredentialsProvider = _Credentials.default ?? _Credentials;
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),

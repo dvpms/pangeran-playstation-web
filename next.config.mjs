@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ["next-auth", "@auth/prisma-adapter", "bcrypt"],
   images: {
     remotePatterns: [
       {

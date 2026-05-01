@@ -7,29 +7,29 @@ import FinalCTA from "./components/FinalCTA";
 import CoverageArea from "./components/CoverageArea";
 import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
 import { ScrollReveal, StaggerContainer } from "@/components/animations";
+import { getBookingFormData } from "@/services/catalog";
 
-export default function Page() {
-  const items = [
-    {
-      title: "PS4 Slim",
-      subtitle: "Termasuk 2 Stick, Kabel HDMI, Kabel Power",
-      price: [
-        { duration: "12 Jam", cost: "75k" },
-        { duration: "1 Hari", cost: "115k" },
-        { duration: "2 Hari", cost: "225k" },
-        { duration: "3 Hari", cost: "330k" },
-      ],
+export default async function Page() {
+  const { consoles, addons } = await getBookingFormData();
+
+  // Gabungkan console dan addon untuk ditampilkan di landing page
+  const catalogItems = [
+    ...consoles.map((c) => ({
+      id: c.id,
+      title: c.name,
+      subtitle: c.description,
+      label: "Unit",
+      tiers: c.tiers,
       image: "/images/ps4-slim1.png",
-    },
-    {
-      title: "TCL 40 Inch",
+    })),
+    ...addons.map((a) => ({
+      id: a.id,
+      title: a.name,
+      subtitle: a.description,
       label: "Add-on",
-      subtitle: "Smart TV 40 inch dengan resolusi Full HD",
-      price: [
-        { duration: "Hanya", cost: "49k" },
-      ],
+      tiers: a.tiers,
       image: "/images/tv-setup.png",
-    },
+    })),
   ];
   const games = [
     {
@@ -103,8 +103,8 @@ export default function Page() {
               </p>
             </ScrollReveal>
             <StaggerContainer staggerDelay={0.15} duration={0.5} className="grid md:grid-cols-2 gap-8">
-              {items.map((item) => (
-                <CatalogUnit key={item.title} {...item} />
+              {catalogItems.map((item) => (
+                <CatalogUnit key={item.id} {...item} />
               ))}
             </StaggerContainer>
           </div>
