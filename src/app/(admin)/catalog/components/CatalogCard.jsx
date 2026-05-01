@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { MdEdit, MdDelete, MdAddCircle } from "react-icons/md";
 
 const TYPE_BADGE = {
@@ -14,39 +15,65 @@ function formatRupiah(amount) {
 export default function CatalogCard({
   catalog,
   onEditCatalog,
+  onDeleteCatalog,
   onEditTier,
   onAddTier,
   onDeleteTier,
 }) {
-  const { id, name, type, description, tiers = [] } = catalog;
+  const { id, name, type, description, imageUrl, tiers = [] } = catalog;
 
   return (
     <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-blue border border-outline-variant/20">
       {/* Card Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <h2 className="text-lg font-bold text-surface-on truncate">{name}</h2>
-            <span
-              className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                TYPE_BADGE[type] ?? "bg-surface-container text-surface-on"
-              }`}
-            >
-              {type}
-            </span>
-          </div>
-          {description && (
-            <p className="text-sm text-surface-on/60 mt-0.5">{description}</p>
+        <div className="flex gap-4 flex-1 min-w-0">
+          {/* Image */}
+          {imageUrl && (
+            <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-outline-variant/20 shrink-0">
+              <Image
+                src={imageUrl}
+                alt={name}
+                fill
+                className="object-cover"
+                sizes="96px"
+              />
+            </div>
           )}
+
+          {/* Text content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <h2 className="text-lg font-bold text-surface-on truncate">{name}</h2>
+              <span
+                className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                  TYPE_BADGE[type] ?? "bg-surface-container text-surface-on"
+                }`}
+              >
+                {type}
+              </span>
+            </div>
+            {description && (
+              <p className="text-sm text-surface-on/60 mt-0.5">{description}</p>
+            )}
+          </div>
         </div>
 
-        <button
-          onClick={() => onEditCatalog(catalog)}
-          className="flex items-center gap-1.5 bg-secondary-container text-secondary-on-container py-2 px-4 rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shrink-0"
-        >
-          <MdEdit className="w-4 h-4" />
-          Edit Katalog
-        </button>
+        <div className="flex gap-2 shrink-0">
+          <button
+            onClick={() => onEditCatalog(catalog)}
+            className="flex items-center gap-1.5 bg-secondary-container text-secondary-on-container py-2 px-4 rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all"
+          >
+            <MdEdit className="w-4 h-4" />
+            Edit
+          </button>
+          <button
+            onClick={() => onDeleteCatalog(catalog)}
+            className="flex items-center gap-1.5 bg-red-50 text-red-600 py-2 px-4 rounded-xl font-bold text-sm hover:bg-red-100 hover:scale-[1.02] active:scale-95 transition-all"
+          >
+            <MdDelete className="w-4 h-4" />
+            Hapus
+          </button>
+        </div>
       </div>
 
       {/* Tier Table */}

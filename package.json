@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
+    "@aws-sdk/client-s3": "^3.980.0",
     "@prisma/adapter-pg": "^7.7.0",
     "@tanstack/react-query": "^5.95.2",
     "axios": "^1.14.0",
@@ -43,6 +44,7 @@
     "babel-jest": "^30.3.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
+    "fast-check": "^4.5.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",

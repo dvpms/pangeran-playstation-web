@@ -20,7 +20,8 @@ export default async function Page() {
       subtitle: c.description,
       label: "Unit",
       tiers: c.tiers,
-      image: "/images/ps4-slim1.png",
+      image: c.imageUrl,
+      type: "CONSOLE",
     })),
     ...addons.map((a) => ({
       id: a.id,
@@ -28,7 +29,8 @@ export default async function Page() {
       subtitle: a.description,
       label: "Add-on",
       tiers: a.tiers,
-      image: "/images/tv-setup.png",
+      image: a.imageUrl,
+      type: "ADDON",
     })),
   ];
   const games = [

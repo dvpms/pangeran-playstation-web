@@ -12,6 +12,7 @@ model Catalog {
   name        String
   type        ItemType
   description String?
+  imageUrl    String?
   inventories Inventory[]
   tiers       PricingTier[]
 }

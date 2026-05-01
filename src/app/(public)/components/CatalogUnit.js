@@ -10,27 +10,27 @@ export default function CatalogUnit({
   subtitle,
   tiers = [],
   image,
+  type,
   label = "Unit",
 }) {
+  // Determine fallback image based on type
+  const fallbackImage =
+    type === "CONSOLE" ? "/images/ps4-slim1.png" : "/images/tv-setup.png";
+  const displayImage = image || fallbackImage;
+
   return (
     <article className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col md:flex-row gap-6">
       <div className="md:w-1/2 rounded-xl overflow-hidden">
-        {image ? (
-          <HoverScale scale={1.08}>
-            <Image
-              src={image}
-              alt={title}
-              loading="lazy"
-              width={800}
-              height={600}
-              className="object-cover w-full h-full"
-            />
-          </HoverScale>
-        ) : (
-          <div className="w-full h-44 bg-surface-container flex items-center justify-center">
-            No Image
-          </div>
-        )}
+        <HoverScale scale={1.08}>
+          <Image
+            src={displayImage}
+            alt={title}
+            loading="lazy"
+            width={800}
+            height={600}
+            className="object-cover w-full h-full"
+          />
+        </HoverScale>
       </div>
       <div className="md:w-1/2 flex flex-col justify-between">
         <div>
