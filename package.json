@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbo -p 5211",
+    "dev": "next dev --webpack -p 3011",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

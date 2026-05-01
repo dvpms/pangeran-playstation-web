@@ -284,33 +284,7 @@ export async function getAllBookings() {
       orderBy: { createdAt: "desc" },
     });
 
-    // Convert Decimal objects to numbers for Client Component serialization
-    return bookings.map((booking) => ({
-      ...booking,
-      totalPrice: booking.totalPrice ? Number(booking.totalPrice) : 0,
-      tier: booking.tier
-        ? {
-            ...booking.tier,
-            price: booking.tier.price ? Number(booking.tier.price) : 0,
-            oldPrice: booking.tier.oldPrice ? Number(booking.tier.oldPrice) : 0, // Tambahkan baris ini!
-            discount: booking.tier.discount ? Number(booking.tier.discount) : 0,
-            catalog: booking.tier.catalog ? { ...booking.tier.catalog } : null,
-          }
-        : null,
-      items: booking.items
-        ? booking.items.map((item) => ({
-            ...item,
-            inventory: item.inventory
-              ? {
-                  ...item.inventory,
-                  dailyRate: item.inventory.dailyRate
-                    ? Number(item.inventory.dailyRate)
-                    : 0,
-                }
-              : null,
-          }))
-        : [],
-    }));
+    return JSON.parse(JSON.stringify(bookings));
   } catch (error) {
     console.error("Gagal mengambil data booking:", error);
     return [];
