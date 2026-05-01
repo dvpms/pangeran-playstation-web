@@ -1,24 +1,12 @@
-import { prisma } from "@/lib/prisma";
+import { getBookingFormData } from "@/services/catalog";
 import BookingForm from "@/components/ui/BookingForm";
 
 export const metadata = {
   title: "Booking Home Service | Pangeran Playstation",
 };
 
-const toPlain = (data) => JSON.parse(JSON.stringify(data));
-
 export default async function BookingPage() {
-  const consoles = await prisma.catalog.findMany({
-    where: { type: "CONSOLE" },
-    include: {
-      tiers: { orderBy: { price: "asc" } },
-    },
-  });
-
-  const addons = await prisma.catalog.findMany({
-    where: { type: "ADDON" },
-    include: { tiers: true },
-  });
+  const { consoles, addons } = await getBookingFormData();
 
   return (
     <div className="min-h-screen bg-surface pt-12 pb-24">
@@ -33,10 +21,7 @@ export default async function BookingPage() {
           </p>
         </div>
 
-        <BookingForm
-          initialConsoles={toPlain(consoles)}
-          initialAddons={toPlain(addons)}
-        />
+        <BookingForm initialConsoles={consoles} initialAddons={addons} />
       </div>
     </div>
   );
