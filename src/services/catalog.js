@@ -177,3 +177,115 @@ export async function deletePricingTier(id) {
     return { success: false, message: "Terjadi kesalahan server" };
   }
 }
+
+// Delete a Catalog along with all its PricingTiers (image deletion handled client-side via cloudinary service)
+export async function deleteCatalog(id) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return { success: false, message: "Unauthorized" };
+
+    // Check for active bookings referencing any tier of this catalog
+    const activeBookingCount = await prisma.booking.count({
+      where: {
+        tier: { catalogId: id },
+        status: { notIn: ["COMPLETED", "CANCELLED"] },
+      },
+    });
+
+    if (activeBookingCount > 0) {
+      return {
+        success: false,
+        message: `Tidak bisa dihapus: ada ${activeBookingCount} booking aktif yang menggunakan katalog ini`,
+      };
+    }
+
+    // Cascade delete: tiers are deleted first via Prisma relation
+    await prisma.$transaction(async (tx) => {
+      await tx.pricingTier.deleteMany({ where: { catalogId: id } });
+      await tx.catalog.delete({ where: { id } });
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Gagal menghapus catalog:", error);
+    return { success: false, message: "Terjadi kesalahan server" };
+  }
+}
+
+// Update catalog including optional imageUrl change
+export async function updateCatalogWithImage(id, payload) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return { success: false, message: "Unauthorized" };
+
+    if (!payload.name?.trim()) {
+      return { success: false, message: "Nama katalog tidak boleh kosong" };
+    }
+
+    await prisma.catalog.update({
+      where: { id },
+      data: {
+        name: payload.name.trim(),
+        description: payload.description?.trim() || null,
+        imageUrl: payload.imageUrl, // null = remove, string = new URL, undefined = keep existing
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Gagal update catalog:", error);
+    return { success: false, message: "Terjadi kesalahan server" };
+  }
+}
+
+// Create new Catalog with first PricingTier
+export async function createCatalog(payload) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return { success: false, message: "Unauthorized" };
+
+    // Server-side validation
+    if (!payload.name?.trim()) {
+      return { success: false, message: "Nama katalog tidak boleh kosong" };
+    }
+    if (!payload.type || !["CONSOLE", "ADDON"].includes(payload.type)) {
+      return { success: false, message: "Tipe katalog harus dipilih" };
+    }
+    if (!payload.tier?.label?.trim()) {
+      return { success: false, message: "Label paket tidak boleh kosong" };
+    }
+    if (!payload.tier?.duration?.trim()) {
+      return { success: false, message: "Durasi tidak boleh kosong" };
+    }
+    if (!payload.tier?.price || payload.tier.price <= 0) {
+      return { success: false, message: "Harga harus berupa angka positif" };
+    }
+
+    // Atomic transaction: create Catalog + first PricingTier
+    await prisma.$transaction(async (tx) => {
+      const catalog = await tx.catalog.create({
+        data: {
+          name: payload.name.trim(),
+          type: payload.type,
+          description: payload.description?.trim() || null,
+          imageUrl: payload.imageUrl || null,
+        },
+      });
+
+      await tx.pricingTier.create({
+        data: {
+          catalogId: catalog.id,
+          label: payload.tier.label.trim(),
+          duration: payload.tier.duration.trim(),
+          price: payload.tier.price,
+          oldPrice: payload.tier.oldPrice || null,
+        },
+      });
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Gagal membuat catalog baru:", error);
+    return { success: false, message: "Terjadi kesalahan server" };
+  }
+}
