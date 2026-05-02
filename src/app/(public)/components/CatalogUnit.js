@@ -1,33 +1,36 @@
 import Image from "next/image";
 import { HoverScale } from "@/components/animations";
 
+function formatRupiah(amount) {
+  return Number(amount).toLocaleString("id-ID");
+}
+
 export default function CatalogUnit({
   title,
   subtitle,
-  price,
+  tiers = [],
   image,
+  type,
   label = "Unit",
-  badges = [],
 }) {
+  // Determine fallback image based on type
+  const fallbackImage =
+    type === "CONSOLE" ? "/images/ps4-slim1.png" : "/images/tv-setup.png";
+  const displayImage = image || fallbackImage;
+
   return (
     <article className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col md:flex-row gap-6">
       <div className="md:w-1/2 rounded-xl overflow-hidden">
-        {image ? (
-          <HoverScale scale={1.08}>
-            <Image
-              src={image}
-              alt={title}
-              loading="lazy"
-              width={800}
-              height={600}
-              className="object-cover w-full h-full"
-            />
-          </HoverScale>
-        ) : (
-          <div className="w-full h-44 bg-surface-container flex items-center justify-center">
-            No Image
-          </div>
-        )}
+        <HoverScale scale={1.08}>
+          <Image
+            src={displayImage}
+            alt={title}
+            loading="lazy"
+            width={800}
+            height={600}
+            className="object-cover w-full h-full"
+          />
+        </HoverScale>
       </div>
       <div className="md:w-1/2 flex flex-col justify-between">
         <div>
@@ -47,15 +50,22 @@ export default function CatalogUnit({
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 mt-4 text-center">
-            {price.map(({ duration, cost }) => (
+            {tiers.map((tier) => (
               <div
-                key={duration}
+                key={tier.id}
                 className="p-3 rounded-xl border-2 border-primary"
               >
                 <div className="text-[10px] font-bold text-primary uppercase">
-                  {duration}
+                  {tier.duration}
                 </div>
-                <div className="text-lg font-bold text-primary ">Rp {cost}</div>
+                {tier.oldPrice != null && (
+                  <div className="text-xs text-surface-on/40 line-through">
+                    Rp {formatRupiah(tier.oldPrice)}
+                  </div>
+                )}
+                <div className="text-lg font-bold text-primary">
+                  Rp {formatRupiah(tier.price)}
+                </div>
               </div>
             ))}
           </div>

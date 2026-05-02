@@ -12,6 +12,7 @@ model Catalog {
   name        String
   type        ItemType
   description String?
+  imageUrl    String?
   inventories Inventory[]
   tiers       PricingTier[]
 }
@@ -81,6 +82,16 @@ model User {
 enum Role {
   ADMIN
   OWNER
+}
+
+model GameCatalog {
+  id        String   @id @default(uuid())
+  title     String
+  imageUrl  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("game_catalog")
 }
 
 enum ItemType {
