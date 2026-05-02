@@ -8,9 +8,11 @@ import CoverageArea from "./components/CoverageArea";
 import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
 import { ScrollReveal, StaggerContainer } from "@/components/animations";
 import { getBookingFormData } from "@/services/catalog";
+import { getAllGames } from "@/services/gameCatalog";
 
 export default async function Page() {
   const { consoles, addons } = await getBookingFormData();
+  const gamesData = await getAllGames();
 
   // Gabungkan console dan addon untuk ditampilkan di landing page
   const catalogItems = [
@@ -33,64 +35,8 @@ export default async function Page() {
       type: "ADDON",
     })),
   ];
-  const games = [
-    {
-      title: "Moto GP 25",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/moto-gp-25_h9grti.jpg",
-    },
-    {
-      title: "NFS Heat",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/nfs-heat_kzfqpu.jpg",
-    },
-    {
-      title: "Naruto Storm 4",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/naruto-storm-4_wykpfy.jpg",
-    },
-    {
-      title: "Spiderman Miles Morales",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/spider-man_odcq0g.jpg",
-    },
-    {
-      title: "Lego Marvel Avengers",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/lego-avengers_teddz6.jpg",
-    },
-    {
-      title: "Mincecraft Dungeons",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/minecraft-dungeons_krowpo.jpg",
-    },
-    {
-      title: "Resident Evil 2 Remake",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/resident-evil-2_g1v84i.jpg",
-    },
-    {
-      title: "It Takes Two",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/it-takes-two_uy4f4o.jpg",
-    },
-    {
-      title: "Horizon Zero Dawn",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/horizon-zero-dawn_gpcdzi.jpg",
-    },
-    {
-      title: "God of War Ragnarok",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/god-of-war-ragnarok_gpoeqr.jpg",
-    },
-    {
-      title: "FC 26",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/fc-26_fioyqd.jpg",
-    },
-    {
-      title: "Dark Souls Remastered",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/dark-souls_coabyz.jpg",
-    },
-    {
-      title: "F1",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/f1_kgpg6i.jpg",
-    },
-    {
-      title: "Ben 10",
-      image: "https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/ben-ten_vlylpq.jpg",
-    },
-  ];
+
+  const games = gamesData.map((g) => ({ title: g.title, image: g.imageUrl }));
 
   return (
     <>

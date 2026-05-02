@@ -16,6 +16,7 @@ import {
   MdMenu,
   MdClose,
   MdCategory,
+  MdVideogameAsset,
 } from "react-icons/md";
 import Swal from "sweetalert2";
 import { useMenu } from '../context/MenuContext';
@@ -30,6 +31,7 @@ const iconMap = {
   help: MdHelp,
   add_circle: MdAddCircle,
   category: MdCategory,
+  videogame_asset: MdVideogameAsset,
 };
 
 const menuItems = [
@@ -37,6 +39,7 @@ const menuItems = [
   { href: "/bookings", label: "Bookings", icon: "calendar_month" },
   { href: "/inventory", label: "Inventory", icon: "sports_esports" },
   { href: "/catalog", label: "Catalog & Harga", icon: "category" },
+  { href: "/game-catalog", label: "Game Catalog", icon: "videogame_asset" },
   { href: "/customers", label: "Customers", icon: "group", comingSoon: true },
   { href: "/finance", label: "Finance", icon: "payments", comingSoon: true },
 ];
