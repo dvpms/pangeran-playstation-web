@@ -13,11 +13,11 @@ export default async function BookingPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="mb-10">
           <h1 className="text-4xl font-extrabold text-surface-on tracking-tight mb-4">
-            Home Service Booking
+            Booking Sekarang, Main di Rumah!
           </h1>
           <p className="text-surface-on/80 text-lg max-w-2xl">
-            Nikmati pengalaman gaming premium langsung di rumah Anda. Silakan
-            lengkapi detail penyewaan di bawah ini.
+            Pilih unit, isi detail penyewaan, lalu tunggu konfirmasi
+            dari admin. PS siap diantar ke tempat kamu.
           </p>
         </div>
 
