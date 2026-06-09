@@ -23,8 +23,8 @@ export default function RootLayout({ children }) {
       <body className={` ${plusJakarta.variable}`}>
         <ReactQueryProvider>
           {children}
+          <Analytics />
         </ReactQueryProvider>
-        <Analytics />
       </body>
     </html>
   );
