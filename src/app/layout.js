@@ -1,6 +1,7 @@
 import "./globals.css";
 import ReactQueryProvider from "../providers/ReactQueryProvider";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 // Konfigurasi font
 const plusJakarta = Plus_Jakarta_Sans({
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
         <ReactQueryProvider>
           {children}
         </ReactQueryProvider>
+        <Analytics />
       </body>
     </html>
   );
