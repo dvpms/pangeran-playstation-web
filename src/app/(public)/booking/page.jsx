@@ -2,7 +2,16 @@ import { getBookingFormData } from "@/services/catalog";
 import BookingForm from "@/components/ui/BookingForm";
 
 export const metadata = {
-  title: "Booking Home Service | Pangeran Playstation",
+  title: "Booking Rental PS4 & Sewa TV | Pangeran Playstation",
+  description: "Pesan rental PS4 atau sewa TV untuk home service di Tangerang sekarang. Gratis ongkir hingga 7km, unit terawat, dan banyak bonus game terbaru.",
+  openGraph: {
+    title: "Booking Rental PS4 & Sewa TV | Pangeran Playstation",
+    description: "Pesan rental PS4 atau sewa TV untuk home service di Tangerang sekarang.",
+    url: 'https://www.pangeranplaystation.my.id/booking',
+  },
+  alternates: {
+    canonical: '/booking',
+  },
 };
 
 export default async function BookingPage() {
