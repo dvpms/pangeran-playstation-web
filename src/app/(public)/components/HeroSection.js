@@ -38,7 +38,7 @@ export default function HeroSection() {
             <div className="relative rounded-2xl overflow-hidden shadow-ethereal w-auto md:w-147 h-62.5 md:h-137 ">
               <Image
                 src="/images/ps4-setup1.png"
-                alt="PS4 setup"
+                alt="Rental PS4 Home Service Tangerang Pangeran Playstation"
                 loading="eager"
                 sizes=""
                 width={588}
@@ -91,7 +91,7 @@ export default function HeroSection() {
             <div className="relative rounded-2xl overflow-hidden shadow-ethereal w-auto md:w-147 h-62.5 md:h-137 ">
               <Image
                 src="/images/ps4-setup1.png"
-                alt="PS4 setup"
+                alt="Rental PS4 Home Service Tangerang Pangeran Playstation"
                 loading="eager"
                 sizes=""
                 width={588}
