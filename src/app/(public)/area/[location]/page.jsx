@@ -1,17 +1,76 @@
-import HeroSection from "./components/HeroSection";
-import CatalogUnit from "./components/CatalogUnit";
-import GamesCarousel from "./components/GamesCarousel";
-import HowTo from "./components/HowTo";
-import Terms from "./components/Terms";
-import FinalCTA from "./components/FinalCTA";
-import CoverageArea from "./components/CoverageArea";
-import FAQ, { faqData } from "./components/FAQ";
+import HeroSection from "../../components/HeroSection";
+import CatalogUnit from "../../components/CatalogUnit";
+import GamesCarousel from "../../components/GamesCarousel";
+import HowTo from "../../components/HowTo";
+import Terms from "../../components/Terms";
+import FinalCTA from "../../components/FinalCTA";
+import CoverageArea from "../../components/CoverageArea";
+import FAQ, { faqData } from "../../components/FAQ";
 import WhatsAppFloatingButton from '@/components/ui/WhatsAppFloatingButton';
 import { ScrollReveal, StaggerContainer } from "@/components/animations";
 import { getBookingFormData } from "@/services/catalog";
 import { getAllGames } from "@/services/gameCatalog";
+import { notFound } from "next/navigation";
 
-export default async function Page() {
+// Daftar area yang di-support (untuk build time dan validasi)
+const supportedAreas = [
+  "bsd",
+  "karawaci",
+  "curug",
+  "bitung",
+  "citra-raya",
+  "cikupa",
+  "balaraja",
+  "cisoka",
+  "tangerang"
+];
+
+// Helper untuk format nama area (misal: "citra-raya" jadi "Citra Raya")
+const formatLocationName = (slug) => {
+  return slug
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+export async function generateMetadata({ params }) {
+  const { location } = await params;
+  if (!supportedAreas.includes(location.toLowerCase())) {
+    return {};
+  }
+  
+  const locName = formatLocationName(location);
+  
+  return {
+    title: `Rental PS4 & Sewa TV di ${locName} | Pangeran Playstation`,
+    description: `Layanan rental PS4 dan sewa TV home service di ${locName}. Gratis ongkir, unit terawat, dan banyak bonus game terbaru. Pesan sekarang!`,
+    keywords: [`rental ps4 ${locName.toLowerCase()}`, `sewa ps4 ${locName.toLowerCase()}`, `sewa tv ${locName.toLowerCase()}`, `rental playstation ${locName.toLowerCase()}`, `rental ps ${locName.toLowerCase()}`],
+    openGraph: {
+      title: `Rental PS4 & Sewa TV ${locName}`,
+      description: `Layanan rental PS4 dan sewa TV home service di ${locName}. Langsung antar ke ruang tamu Anda!`,
+      url: `https://www.pangeranplaystation.my.id/area/${location.toLowerCase()}`,
+    },
+    alternates: {
+      canonical: `/area/${location.toLowerCase()}`,
+    },
+  };
+}
+
+export async function generateStaticParams() {
+  return supportedAreas.map((location) => ({
+    location,
+  }));
+}
+
+export default async function AreaPage({ params }) {
+  const { location } = await params;
+  
+  if (!supportedAreas.includes(location.toLowerCase())) {
+    notFound();
+  }
+
+  const locName = formatLocationName(location);
+
   const { consoles, addons } = await getBookingFormData();
   const gamesData = await getAllGames();
 
@@ -64,8 +123,8 @@ export default async function Page() {
         "position": index + 1,
         "item": {
           "@type": "Product",
-          "name": `Sewa ${item.title} Tangerang`,
-          "description": item.subtitle || `Rental ${item.title} Home Service`,
+          "name": `Sewa ${item.title} ${locName}`,
+          "description": item.subtitle || `Rental ${item.title} Home Service ${locName}`,
           "image": item.image ? `https://www.pangeranplaystation.my.id${item.image}` : undefined,
           "offers": hasPrices ? {
             "@type": "AggregateOffer",
@@ -85,12 +144,12 @@ export default async function Page() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
 
-        <HeroSection />
+        <HeroSection location={`di ${locName}`} />
 
         <section className="py-20 md:py-25 bg-surface-container-low ">
           <div className="max-w-7xl mx-auto px-6">
             <ScrollReveal animation="fadeInUp" duration={0.6}>
-              <h2 className="text-3xl font-extrabold mb-3">Unit Tersedia</h2>
+              <h2 className="text-3xl font-extrabold mb-3">Unit Tersedia di {locName}</h2>
               <p className="text-on-surface-variant mb-8">
                 Unit terawat, update game terbaru, dan siap pakai.
               </p>

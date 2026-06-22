@@ -5,7 +5,7 @@ import Container from "@/components/ui/Container";
 import { FadeInUp, HoverScale } from "@/components/animations";
 import { useAnimationPreference } from "@/hooks/useAnimationPreference";
 
-export default function HeroSection() {
+export default function HeroSection({ location = "Tangerang" }) {
   const { shouldAnimate, duration } = useAnimationPreference();
 
   // Disable animations if user prefers reduced motion
@@ -19,7 +19,7 @@ export default function HeroSection() {
                 Premium Home Service
               </span>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold md:font-extrabold text-on-surface leading-tight mb-4">
-                Rental PS4 &amp; TV, Langsung Antar ke{" "}
+                Rental PS4 &amp; TV {location}, Langsung Antar ke{" "}
                 <span className="text-primary">Ruang Tamu Anda.</span>
               </h1>
               <p className="text-sm md:text-base text-on-surface-variant mb-6 max-w-lg">
@@ -65,7 +65,7 @@ export default function HeroSection() {
             </FadeInUp>
             <FadeInUp delay={0.1} duration={duration}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold md:font-extrabold text-on-surface leading-tight mb-4">
-                Rental PS4 &amp; TV, Langsung Antar ke{" "}
+                Rental PS4 &amp; TV {location}, Langsung Antar ke{" "}
                 <span className="text-primary">Ruang Tamu Anda.</span>
               </h1>
             </FadeInUp>
