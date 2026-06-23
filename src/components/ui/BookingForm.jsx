@@ -10,17 +10,24 @@ import Select from "react-select";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 import { getUnavailableDates, submitBooking } from "@/services/booking";
+import LocationPicker from "@/components/ui/LocationPicker";
+import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import Image from "next/image";
 import Swal from "sweetalert2";
 
 export default function BookingForm({ initialConsoles, initialAddons }) {
   const defaultConsole = initialConsoles.length > 0 ? initialConsoles[0] : null;
   const tvAddon = initialAddons.length > 0 ? initialAddons[0] : null;
+
   // State Interaktif: Produk
   const [selectedUnit, setSelectedUnit] = useState(defaultConsole);
   const [selectedAddon, setSelectedAddon] = useState(false);
   const [selectedTier, setSelectedTier] = useState(null);
   const [startDate, setStartDate] = useState(null);
+
+  // State Lokasi & Ongkir
+  const [location, setLocation] = useState(null);
+  const { data: deliverySettings } = useDeliverySettings();
 
   // State Form
   const [name, setName] = useState("");
@@ -29,7 +36,6 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const [jaminan, setJaminan] = useState(null);
   const [socialMediaType, setSocialMediaType] = useState(null);
   const [socialMediaUsername, setSocialMediaUsername] = useState("");
-  // const [address, setAddress] = useState("");
 
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [unavailableTvDates, setUnvailableTvDates] = useState([]);
@@ -89,12 +95,13 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   ];
   const areaOptions = coverageAreas.map((a) => ({ value: a, label: a }));
 
-  // State untuk react-select
+  // Kalkulasi harga
   const tvPrice =
     tvAddon && tvAddon.tiers.length > 0 ? Number(tvAddon.tiers[0].price) : 0;
   const unitTotal = selectedTier ? Number(selectedTier.price) : 0;
   const addonTotal = selectedAddon ? tvPrice : 0;
-  const grandTotal = unitTotal + addonTotal;
+  const deliveryFee = location?.deliveryResult?.fee ?? 0;
+  const grandTotal = unitTotal + addonTotal + deliveryFee;
 
   const handleSocialMediaUsernameChange = (e) => {
     const value = e.target.value;
@@ -121,8 +128,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
     setIsSubmitting(true);
 
     try {
-      // Hitung endDate sederhana (Untuk sementara kita tambah 1 hari dari startDate sebagai baseline)
-      // Di sistem yang lebih kompleks, ini dihitung berdasarkan kode durasi tier (12h, 1d, 2d)
+      // Hitung endDate sederhana berdasarkan kode durasi tier
       const end = new Date(startDate);
       if (selectedTier.duration === "2d") end.setDate(end.getDate() + 1);
       if (selectedTier.duration === "3d") end.setDate(end.getDate() + 2);
@@ -150,15 +156,24 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         jaminan: jaminan.value,
         socialMediaType: socialMediaType.value,
         socialMediaUsername: socialMediaUsername,
-        // fullAddress: address,
         totalPrice: grandTotal,
         addonTv: selectedAddon,
         tvCatalogId: selectedAddon && tvAddon ? tvAddon.id : null,
+        locationLat: location?.lat ?? null,
+        locationLng: location?.lng ?? null,
+        locationName: location?.name ?? null,
+        distanceKm: location?.deliveryResult?.distanceKm ?? null,
+        deliveryFee: location?.deliveryResult?.fee ?? null,
       };
 
       const result = await submitBooking(payload);
 
       if (result.success) {
+        // Trigger Google Ads Conversion Tracking Event
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag('event', 'conversion', {'send_to': 'AW-18262501744/pRDJCJCpj8QcEPDSnoRE'});
+        }
+
         // reset form
         setSelectedUnit(defaultConsole);
         setSelectedTier(null);
@@ -170,8 +185,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         setJaminan(null);
         setSocialMediaType(null);
         setSocialMediaUsername("");
-
-        // setAddress("");
+        setLocation(null);
 
         Swal.fire({
           icon: "success",
@@ -429,7 +443,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
           </div>
         </section>
 
-        {/* Section 5: Detail Pengiriman & Kontak (BARU) */}
+        {/* Section 5: Detail Pengiriman & Kontak */}
         <section>
           <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
             <span className="material-symbols-outlined text-primary">
@@ -455,7 +469,6 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                 <label className="text-sm font-bold text-surface-on">
                   Nomor WhatsApp
                 </label>
-
                 <input
                   type="number"
                   normalize="false"
@@ -537,7 +550,6 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   classNamePrefix="react-select"
                 />
               </div>
-
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-surface-on">
                   Area Layanan
@@ -555,18 +567,11 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
               </div>
             </div>
 
-            {/* <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-surface-on">
-                Detail Alamat Lengkap
-              </label>
-              <textarea
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                rows="3"
-                placeholder="Masukkan Nama Jalan, No Rumah, RT/RW, dan Patokan (Contoh: Samping Masjid Al-Ikhlas)"
-                className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-transparent focus:border-primary resize-none"
-              ></textarea>
-            </div> */}
+            {/* Lokasi Pengiriman */}
+            <LocationPicker
+              onLocationChange={setLocation}
+              deliverySettings={deliverySettings}
+            />
           </div>
         </section>
       </div>
@@ -620,6 +625,27 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                 {selectedAddon ? `+ ${formatRupiah(tvPrice)}` : "Belum dipilih"}
               </p>
             </div>
+
+            <div className="flex justify-between items-center text-sm">
+              <div>
+                <p className={location ? "text-surface-on font-semibold" : "text-surface-on/40 italic"}>
+                  Ongkos Kirim
+                </p>
+                {location?.deliveryResult && (
+                  <p className="text-xs text-surface-on/50 mt-0.5">
+                    {location.deliveryResult.distanceKm.toFixed(1)} km dari stasiun terdekat
+                  </p>
+                )}
+              </div>
+              <p className={location ? "font-bold text-surface-on" : "text-surface-on/40"}>
+                {!location
+                  ? "-"
+                  : deliveryFee === 0
+                    ? <span className="text-green-600 font-bold">Gratis</span>
+                    : formatRupiah(deliveryFee)
+                }
+              </p>
+            </div>
           </div>
 
           <div className="flex justify-between items-center mb-2 border-b border-gray pb-4">
@@ -629,7 +655,10 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
             </p>
           </div>
           <div className="text-xs text-surface-on/60 mb-6">
-            <span>*Belum termasuk Ongkir</span>
+            {location
+              ? <span className="text-green-600 font-medium">*Sudah termasuk ongkos kirim</span>
+              : <span>*Belum termasuk Ongkir</span>
+            }
           </div>
           <button
             onClick={handleSubmit}
