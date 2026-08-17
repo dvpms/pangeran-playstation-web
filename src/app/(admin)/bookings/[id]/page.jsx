@@ -308,7 +308,7 @@ export default function BookingDetailPage() {
               {booking.paymentMethod === "CASH"
                 ? "Cash (Bayar di Tempat)"
                 : booking.paymentMethod === "TRANSFER"
-                ? "Transfer Bank
+                ? "Transfer Bank"
                 : booking.paymentMethod ?? "-"}
             </InfoRow>
           </SectionCard>

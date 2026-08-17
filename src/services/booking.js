@@ -239,7 +239,7 @@ Terima kasih telah melakukan booking! Berikut rincian pesanan Anda:
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: "devranmalik82@gmail.com",
+      to: "pangeranplaystation@gmail.com",
       subject: `[Booking Baru] #${bookingCode} - ${payload.customerName} (${payload.unitName})`,
       text: plainSummary,
       html: `
