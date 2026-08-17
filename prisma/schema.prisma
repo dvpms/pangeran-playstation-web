@@ -49,6 +49,9 @@ model Booking {
   addonTv              Boolean       @default(false)
   tierId               String
   deliveryArea         String?
+  address              String?       // Detail alamat, blok, nomor rumah, RT/RW
+  paymentMethod        String?       // "CASH" | "TRANSFER"
+  sourceInfo           String?       // e.g., "Instagram", "TikTok", "Google", dll.
   jaminan              String?       // e.g., "KTP + STNK"
   socialMediaType      String?       // e.g., "Instagram", "Twitter", "Facebook", "TikTok"
   socialMediaUsername  String?       // e.g., "@username"
