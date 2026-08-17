@@ -28,6 +28,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("TRANSFER"); // "TRANSFER" | "CASH"
   const [sourceInfo, setSourceInfo] = useState(null);
+  const [otherSource, setOtherSource] = useState("");
   const [jaminan, setJaminan] = useState(null);
   const [socialMediaType, setSocialMediaType] = useState(null);
   const [socialMediaUsername, setSocialMediaUsername] = useState("");
@@ -91,11 +92,10 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const areaOptions = coverageAreas.map((a) => ({ value: a, label: a }));
 
   const sourceOptions = [
-    { value: "Instagram", label: "Instagram (@pangeranplaystation)" },
+    { value: "Instagram", label: "Instagram" },
     { value: "TikTok", label: "TikTok" },
-    { value: "Google Search / Maps", label: "Google Search / Maps" },
-    { value: "Teman / Rekomendasi", label: "Teman / Rekomendasi Keluarga" },
-    { value: "Banner / Spanduk", label: "Banner / Spanduk / Brosur" },
+    { value: "Google", label: "Google" },
+    { value: "Teman", label: "Teman" },
     { value: "Lainnya", label: "Lainnya" },
   ];
 
@@ -117,6 +117,8 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
 
   const isUsernameValid =
     socialMediaUsername.length > 1 && /^@[\w.]+$/.test(socialMediaUsername);
+  const isSourceValid =
+    sourceInfo && (sourceInfo.value !== "Lainnya" || otherSource.trim() !== "");
   const isFormValid =
     selectedTier &&
     startDate &&
@@ -125,7 +127,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
     area &&
     address.trim().length >= 5 &&
     paymentMethod &&
-    sourceInfo &&
+    isSourceValid &&
     jaminan &&
     socialMediaType &&
     isUsernameValid;
@@ -151,6 +153,11 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         return;
       }
 
+      const finalSourceInfo =
+        sourceInfo.value === "Lainnya"
+          ? `Lainnya (${otherSource.trim()})`
+          : sourceInfo.value;
+
       const payload = {
         catalogId: selectedUnit.id,
         unitName: selectedUnit.name,
@@ -163,7 +170,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         deliveryArea: area.value,
         address: address.trim(),
         paymentMethod: paymentMethod,
-        sourceInfo: sourceInfo.value,
+        sourceInfo: finalSourceInfo,
         jaminan: jaminan.value,
         socialMediaType: socialMediaType.value,
         socialMediaUsername: socialMediaUsername,
@@ -193,6 +200,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         setAddress("");
         setPaymentMethod("TRANSFER");
         setSourceInfo(null);
+        setOtherSource("");
         setJaminan(null);
         setSocialMediaType(null);
         setSocialMediaUsername("");
@@ -591,11 +599,36 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   instanceId="source-info-select"
                   options={sourceOptions}
                   value={sourceInfo}
-                  onChange={(opt) => setSourceInfo(opt)}
+                  onChange={(opt) => {
+                    setSourceInfo(opt);
+                    if (opt?.value !== "Lainnya") {
+                      setOtherSource("");
+                    }
+                  }}
                   placeholder="Pilih Sumber Informasi..."
                   className="react-select-container"
                   classNamePrefix="react-select"
                 />
+                {sourceInfo?.value === "Lainnya" && (
+                  <div className="flex flex-col gap-1 mt-1">
+                    <input
+                      type="text"
+                      value={otherSource}
+                      onChange={(e) => setOtherSource(e.target.value)}
+                      placeholder="Sebutkan sumber info lainnya"
+                      className={`w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 border ${
+                        !otherSource.trim()
+                          ? "border-2 border-red-500/50 focus:border-red-500 focus:ring-red-500"
+                          : "border-transparent focus:ring-primary/50 focus:border-primary"
+                      }`}
+                    />
+                    {!otherSource.trim() && (
+                      <span className="text-xs text-red-500 font-bold">
+                        Wajib sebutkan sumber info lainnya
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
