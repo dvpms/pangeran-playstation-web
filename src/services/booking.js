@@ -159,7 +159,9 @@ export async function submitBooking(payload) {
           startDate: new Date(payload.startDate),
           endDate: new Date(payload.endDate),
           deliveryArea: payload.deliveryArea,
-          // fullAddress: payload.fullAddress,
+          address: payload.address,
+          paymentMethod: payload.paymentMethod,
+          sourceInfo: payload.sourceInfo,
           totalPrice: payload.totalPrice,
           addonTv: payload.addonTv,
           jaminan: payload.jaminan,
@@ -188,73 +190,163 @@ export async function submitBooking(payload) {
       return booking;
     });
 
-    // 3. Format isi email
+    // 3. Format isi email & teks copy-paste
+    const bookingCode = newBooking.id.slice(0, 8).toUpperCase();
+    const startDateFormatted = new Date(payload.startDate).toLocaleDateString("id-ID", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    const paymentMethodLabel =
+      payload.paymentMethod === "CASH"
+        ? "Cash (Bayar di Tempat)"
+        : payload.paymentMethod === "TRANSFER"
+        ? "Transfer Bank"
+        : payload.paymentMethod || "-";
+
+    const plainSummary = `*KONFIRMASI BOOKING PANGERAN PLAYSTATION*
+----------------------------------------
+ID Pesanan: #${bookingCode}
+Nama: ${payload.customerName}
+No. WhatsApp: ${payload.whatsappNumber}
+Unit: ${payload.unitName}
+Paket: ${payload.tierLabel}
+Add-on TV: ${payload.addonTv ? "Ya" : "Tidak"}
+Tanggal Mulai: ${startDateFormatted}
+Metode Pembayaran: ${paymentMethodLabel}
+Area Layanan: ${payload.deliveryArea || "-"}
+Detail Alamat & Blok: ${payload.address || "-"}
+Dokumen Jaminan: ${payload.jaminan || "-"}
+Media Sosial: ${payload.socialMediaType || "-"} (${payload.socialMediaUsername || "-"})
+Dapat Info Dari: ${payload.sourceInfo || "-"}
+Total Harga: Rp ${Number(payload.totalPrice).toLocaleString("id-ID")}
+----------------------------------------`;
+
+    const waGreeting = `Halo ${payload.customerName}, kami dari Admin Pangeran Playstation.
+
+Terima kasih telah melakukan booking! Berikut rincian pesanan Anda:
+- ID Pesanan: #${bookingCode}
+- Unit: ${payload.unitName} (${payload.tierLabel})
+- Add-on TV: ${payload.addonTv ? "Ya" : "Tidak"}
+- Tanggal Mulai: ${startDateFormatted}
+- Metode Pembayaran: ${paymentMethodLabel}
+- Area / Alamat: ${payload.deliveryArea} - ${payload.address || "-"}
+- Total: Rp ${Number(payload.totalPrice).toLocaleString("id-ID")}
+`;
+
+    const waLink = `https://wa.me/${payload.whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(waGreeting)}`;
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: "pangeranplaystation@gmail.com",
-      subject: "Konfirmasi Booking Baru",
-      text: `Ada booking baru!`, // fallback
+      subject: `[Booking Baru] #${bookingCode} - ${payload.customerName} (${payload.unitName})`,
+      text: plainSummary,
       html: `
-        <div style="font-family: Arial, sans-serif; color: #222; background: #f7f7fa; padding: 24px;">
-          <!-- Header Logo -->
-          <div style="text-align: center; margin-bottom: 24px;">
-            <img src="https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/v1776429034/logo_n3akzn.png" alt="Pangeran Playstation" style="height: 60px; margin-bottom: 8px;" />
-            <h2 style="color: #2d6cdf; margin: 0;">Konfirmasi Booking Baru</h2>
-          </div>
-          <!-- Booking Table -->
-          <table style="border-collapse: collapse; width: 100%; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px #0001;">
-            <tbody>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">ID Pesanan</td>
-                <td style="padding: 10px 16px;">${newBooking.id.slice(0, 8).toUpperCase()}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Nama</td>
-                <td style="padding: 10px 16px;">${payload.customerName}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Unit</td>
-                <td style="padding: 10px 16px;">${payload.unitName}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Paket</td>
-                <td style="padding: 10px 16px;">${payload.tierLabel}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Add-on TV</td>
-                <td style="padding: 10px 16px;">${payload.addonTv ? "Ya" : "Tidak"}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Mulai</td>
-                <td style="padding: 10px 16px;">${new Date(payload.startDate).toLocaleDateString("id-ID")}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Area</td>
-                <td style="padding: 10px 16px;">${payload.deliveryArea}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Dokumen Jaminan</td>
-                <td style="padding: 10px 16px;">${payload.jaminan || "-"}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Media Sosial</td>
-                <td style="padding: 10px 16px;">${payload.socialMediaType} - @${payload.socialMediaUsername}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: bold; padding: 10px 16px; background: #f0f4fa;">Total Harga</td>
-                <td style="padding: 10px 16px; color: #2d6cdf; font-weight: bold;">Rp ${payload.totalPrice.toLocaleString("id-ID")}</td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- Footer -->
-          <div style="margin-top: 32px; text-align: center; color: #888; font-size: 13px;">
-            <p>Segera cek dashboard admin untuk detail dan konfirmasi!</p>
-            <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;">
-            <p>
-              <b>Pangeran Playstation</b><br>
-              <a href="https://yourdomain.com" style="color: #2d6cdf; text-decoration: none;">yourdomain.com</a><br>
-              <span style="font-size: 12px;">Email otomatis dari sistem booking</span>
-            </p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; background: #f1f5f9; padding: 24px;">
+          <div style="max-width: 620px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+            
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); padding: 28px 24px; text-align: center; color: #ffffff;">
+              <img src="https://res.cloudinary.com/dnmhna2fc/image/upload/q_auto/f_auto/v1776429034/logo_n3akzn.png" alt="Pangeran Playstation" style="height: 52px; margin-bottom: 12px;" />
+              <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em;">Booking Baru Masuk!</h2>
+              <p style="margin: 6px 0 0; font-size: 14px; opacity: 0.9;">Kode Pesanan: <strong>#${bookingCode}</strong></p>
+            </div>
+
+            <div style="padding: 24px;">
+
+              <!-- CTA Button: Direct WhatsApp -->
+              <div style="text-align: center; margin-bottom: 24px;">
+                <a href="${waLink}" target="_blank" style="display: inline-block; background: #25D366; color: #ffffff; font-weight: 700; font-size: 15px; padding: 12px 24px; border-radius: 10px; text-decoration: none; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.35);">
+                  Hubungi Customer
+                </a>
+              </div>
+
+              <!-- Table of Details -->
+              <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin: 0 0 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">
+                📋 Detail Lengkap Pesanan
+              </h3>
+
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 24px;">
+                <tbody>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; width: 38%; background: #f8fafc;">Nama Customer</td>
+                    <td style="padding: 10px 12px; font-weight: 700; color: #0f172a;">${payload.customerName}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Nomor WhatsApp</td>
+                    <td style="padding: 10px 12px; font-weight: 700; color: #2563eb;">
+                      <a href="https://wa.me/${payload.whatsappNumber.replace(/[^0-9]/g, "")}" style="color: #2563eb; text-decoration: none;">${payload.whatsappNumber}</a>
+                    </td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Unit Konsol</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${payload.unitName}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Paket Durasi</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${payload.tierLabel}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Add-on TV</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: ${payload.addonTv ? "#16a34a" : "#64748b"};">${payload.addonTv ? "Ya (+ TV)" : "Tidak"}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Tanggal Mulai</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${startDateFormatted}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Metode Pembayaran</td>
+                    <td style="padding: 10px 12px; font-weight: 700; color: #0f172a;">
+                      <span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 13px;">${paymentMethodLabel}</span>
+                    </td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Area Layanan</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${payload.deliveryArea || "-"}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Detail Alamat & Blok</td>
+                    <td style="padding: 10px 12px; font-weight: 500; color: #0f172a; white-space: pre-wrap;">${payload.address || "-"}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Dokumen Jaminan</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${payload.jaminan || "-"}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Akun Media Sosial</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${payload.socialMediaType || "-"} (${payload.socialMediaUsername || "-"})</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; font-weight: 600; color: #64748b; background: #f8fafc;">Dapat Info Dari</td>
+                    <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${payload.sourceInfo || "-"}</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td style="padding: 12px; font-weight: 700; color: #0f172a;">Total Biaya</td>
+                    <td style="padding: 12px; font-weight: 800; font-size: 16px; color: #2563eb;">Rp ${Number(payload.totalPrice).toLocaleString("id-ID")}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Box Siap Salin / Copy-Paste -->
+              <div style="margin-top: 24px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <strong style="font-size: 13px; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">
+                    📋 Format Teks Siap Salin (Copy & Paste)
+                  </strong>
+                </div>
+                <div style="font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 12.5px; line-height: 1.6; color: #1e293b; background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; white-space: pre-wrap; word-break: break-word; user-select: all;">${plainSummary}</div>
+                <p style="margin: 8px 0 0; font-size: 11px; color: #94a3b8;">*Klik/blok kotak di atas untuk menyalin rangkuman pesanan secara instan.</p>
+              </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 24px; text-align: center; color: #64748b; font-size: 12px;">
+              <p style="margin: 0 0 6px;">Segera cek dashboard admin untuk memverifikasi dan mengubah status booking.</p>
+              <p style="margin: 0; font-weight: 600; color: #0f172a;">Pangeran Playstation Automation</p>
+            </div>
+
           </div>
         </div>
       `,
@@ -288,6 +380,23 @@ export async function getAllBookings() {
   } catch (error) {
     console.error("Gagal mengambil data booking:", error);
     return [];
+  }
+}
+
+export async function getBookingById(id) {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id },
+      include: {
+        tier: { include: { catalog: true } },
+        items: { include: { inventory: true } },
+      },
+    });
+
+    return booking ? JSON.parse(JSON.stringify(booking)) : null;
+  } catch (error) {
+    console.error("Gagal mengambil detail booking:", error);
+    return null;
   }
 }
 

@@ -142,8 +142,17 @@ export default function BookingTable({ bookings: initialBookings = [] }) {
     duration,
     date,
     area,
+    address,
+    paymentMethod,
   }) => {
-    const template = `Halo ${customerName},
+    const paymentText =
+      paymentMethod === "CASH"
+        ? "Cash (Bayar di Tempat)"
+        : paymentMethod === "TRANSFER"
+        ? "Transfer Bank"
+        : paymentMethod || "-";
+
+    let template = `Halo ${customerName},
 
 Terima kasih sudah melakukan booking di Pangeran Playstation
 
@@ -154,7 +163,13 @@ Berikut detail pesanan Anda:
 - TV: ${addonTv ? "Ya" : "Tidak"}
 - Tanggal Mulai: ${date}
 - Durasi: ${duration}
+- Metode Pembayaran: ${paymentText}
 - Area Pengiriman: ${area}`;
+
+    if (address) {
+      template += `\n- Detail Alamat & Blok: ${address}`;
+    }
+
     return template;
   };
 
@@ -163,15 +178,27 @@ Berikut detail pesanan Anda:
     id: booking.id,
     customer: {
       name: booking.customerName,
-      avatar: booking.customerName.charAt(0).toUpperCase(),
+      avatar: booking.customerName ? booking.customerName.charAt(0).toUpperCase() : "U",
     },
     unit: booking.tier?.catalog?.name || "N/A",
+    createdAtFormatted: booking.createdAt
+      ? new Date(booking.createdAt).toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "-",
     date: `${new Date(booking.startDate).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}`,
     duration:
       booking.tier?.label ||
       calculateDuration(booking.startDate, booking.endDate) ||
       "N/A",
-    area: booking.deliveryArea,
+    area: booking.deliveryArea || "-",
+    address: booking.address,
+    paymentMethod: booking.paymentMethod,
+    sourceInfo: booking.sourceInfo,
     tv: booking.addonTv,
     whatsappNumber: booking.whatsappNumber,
     status: mapStatus(booking.status),
@@ -268,6 +295,7 @@ Berikut detail pesanan Anda:
             <table className="w-full text-left border-collapse text-xs md:text-sm">
               <thead>
                 <tr className="border-b-2 border-surface-container-low text-on-surface-variant font-semibold text-xs md:text-sm">
+                  <th className="py-2 md:py-4 px-2 md:px-4 font-medium whitespace-nowrap">Tgl Masuk</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Customer</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">Unit</th>
                   <th className="py-2 md:py-4 px-2 md:px-4 font-medium">TV</th>
@@ -281,16 +309,16 @@ Berikut detail pesanan Anda:
               </thead>
               <tbody className="text-xs md:text-sm">
                 {displayData.map((booking) => {
-                  // Get original booking data for message generation
-                  const originalBooking = bookings.find(
-                    (b) => b.id === booking.id,
-                  );
-
                   return (
                     <tr
                       key={booking.id}
                       className="group hover:bg-surface-container-low/50 transition-colors border-b border-surface-container-low/50"
                     >
+                      {/* Tanggal Masuk */}
+                      <td className="py-2 md:py-4 px-2 md:px-4 text-on-surface-variant font-medium text-xs md:text-sm whitespace-nowrap">
+                        {booking.createdAtFormatted}
+                      </td>
+
                       {/* Customer */}
                       <td className="py-2 md:py-4 px-2 md:px-4">
                         <div className="flex items-center gap-2 md:gap-3">
@@ -331,7 +359,7 @@ Berikut detail pesanan Anda:
                       {/* whatsapp */}
                       <td className="py-2 md:py-4 px-2 md:px-4">
                         <a
-                          href={`https://wa.me/${booking.whatsappNumber}?text=${encodeURIComponent(
+                          href={`https://wa.me/${booking.whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
                             generateGreetingMessage({
                               customerName: booking.customer.name,
                               tier: booking.unit,
@@ -339,11 +367,13 @@ Berikut detail pesanan Anda:
                               date: booking.date,
                               duration: booking.duration,
                               area: booking.area,
+                              address: booking.address,
+                              paymentMethod: booking.paymentMethod,
                             }),
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-green-500 hover:text-green-700 transition-colors text-sm md:text-base"
+                          className="text-green-500 hover:text-green-700 transition-colors text-sm md:text-base inline-flex items-center"
                           title="Hubungi via WhatsApp dengan detail booking"
                         >
                           <MdWhatsapp size={16} className="md:hidden" />
@@ -460,8 +490,8 @@ Berikut detail pesanan Anda:
               >
                 <div className="absolute inset-x-0 top-0 h-1 bg-premium-glow opacity-90" />
 
-                {/* Card Header - Customer Info */}
-                <div className="relative flex items-center justify-between mb-3 p-4 pb-0">
+                {/* Card Header - Customer Info & Tanggal Masuk */}
+                <div className="relative flex items-center justify-between mb-2 p-4 pb-0">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-primary-container/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-primary/15 shadow-sm shadow-primary/10">
                       {booking.customer.avatar}
@@ -471,21 +501,26 @@ Berikut detail pesanan Anda:
                         {booking.customer.name}
                       </p>
                       <p className="text-xs text-on-surface-variant truncate">
-                        {booking.customer.phone || booking.whatsappNumber}
+                        {booking.whatsappNumber}
                       </p>
                     </div>
                   </div>
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ml-2 shadow-sm ${getStatusBadgeColor(
-                      booking.status,
-                    )}`}
-                  >
-                    {booking.statusLabel}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 ml-2">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold whitespace-nowrap shadow-sm ${getStatusBadgeColor(
+                        booking.status,
+                      )}`}
+                    >
+                      {booking.statusLabel}
+                    </span>
+                    <span className="text-[10px] text-on-surface-variant font-medium">
+                      {booking.createdAtFormatted}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Card Body - Booking Details */}
-                <div className="mx-4 mt-4 space-y-2 rounded-2xl border border-outline-variant/40 bg-surface-container-high/55 p-3 shadow-inner">
+                <div className="mx-4 mt-2 space-y-2 rounded-2xl border border-outline-variant/40 bg-surface-container-high/55 p-3 shadow-inner">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-xs text-on-surface-variant">Unit</p>
@@ -504,7 +539,7 @@ Berikut detail pesanan Anda:
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-xs text-on-surface-variant">Tanggal Mulai</p>
-                      <p className="text-xs text-on-surface">{booking.date}</p>
+                      <p className="text-xs text-on-surface font-medium">{booking.date}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-on-surface-variant">Duration</p>
@@ -514,17 +549,25 @@ Berikut detail pesanan Anda:
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-xs text-on-surface-variant mb-1">Area</p>
-                    <p className="text-xs text-on-surface">{booking.area}</p>
+                  <div className="flex justify-between items-start pt-1 border-t border-outline-variant/20">
+                    <div>
+                      <p className="text-xs text-on-surface-variant">Area</p>
+                      <p className="text-xs text-on-surface">{booking.area}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-on-surface-variant">Pembayaran</p>
+                      <p className="text-xs font-medium text-primary">
+                        {booking.paymentMethod === "CASH" ? "Cash (COD)" : "Transfer Bank"}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 {/* Card Footer - Actions */}
-                <div className="relative mx-4 mt-4 mb-4 flex items-center justify-end gap-2 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest/80 px-3 py-2 shadow-[0_12px_30px_-18px_rgba(0,102,138,0.45)]">
+                <div className="relative mx-4 mt-3 mb-4 flex items-center justify-end gap-2 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest/80 px-3 py-2 shadow-[0_12px_30px_-18px_rgba(0,102,138,0.45)]">
                   {/* WhatsApp Button */}
                   <a
-                    href={`https://wa.me/${booking.whatsappNumber}?text=${encodeURIComponent(
+                    href={`https://wa.me/${booking.whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
                       generateGreetingMessage({
                         customerName: booking.customer.name,
                         tier: booking.unit,
@@ -532,6 +575,8 @@ Berikut detail pesanan Anda:
                         date: booking.date,
                         duration: booking.duration,
                         area: booking.area,
+                        address: booking.address,
+                        paymentMethod: booking.paymentMethod,
                       }),
                     )}`}
                     target="_blank"

@@ -3,11 +3,10 @@
 
 import { useState, useEffect } from "react";
 import { BiCalendar } from "react-icons/bi";
-import { FaReceipt, FaSpinner, FaTv } from "react-icons/fa";
+import { FaReceipt, FaSpinner, FaTv, FaCreditCard, FaMoneyBillWave, FaMapMarkerAlt } from "react-icons/fa";
 import { GiConsoleController } from "react-icons/gi";
 import { IoMdTime } from "react-icons/io";
 import Select from "react-select";
-import { FaMapMarkerAlt } from "react-icons/fa";
 
 import { getUnavailableDates, submitBooking } from "@/services/booking";
 import Image from "next/image";
@@ -26,10 +25,12 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [area, setArea] = useState(null);
+  const [address, setAddress] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("TRANSFER"); // "TRANSFER" | "CASH"
+  const [sourceInfo, setSourceInfo] = useState(null);
   const [jaminan, setJaminan] = useState(null);
   const [socialMediaType, setSocialMediaType] = useState(null);
   const [socialMediaUsername, setSocialMediaUsername] = useState("");
-  // const [address, setAddress] = useState("");
 
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [unavailableTvDates, setUnvailableTvDates] = useState([]);
@@ -89,6 +90,15 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   ];
   const areaOptions = coverageAreas.map((a) => ({ value: a, label: a }));
 
+  const sourceOptions = [
+    { value: "Instagram", label: "Instagram (@pangeranplaystation)" },
+    { value: "TikTok", label: "TikTok" },
+    { value: "Google Search / Maps", label: "Google Search / Maps" },
+    { value: "Teman / Rekomendasi", label: "Teman / Rekomendasi Keluarga" },
+    { value: "Banner / Spanduk", label: "Banner / Spanduk / Brosur" },
+    { value: "Lainnya", label: "Lainnya" },
+  ];
+
   // State untuk react-select
   const tvPrice =
     tvAddon && tvAddon.tiers.length > 0 ? Number(tvAddon.tiers[0].price) : 0;
@@ -110,9 +120,12 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
   const isFormValid =
     selectedTier &&
     startDate &&
-    name &&
-    whatsapp &&
+    name.trim() !== "" &&
+    whatsapp.trim() !== "" &&
     area &&
+    address.trim().length >= 5 &&
+    paymentMethod &&
+    sourceInfo &&
     jaminan &&
     socialMediaType &&
     isUsernameValid;
@@ -145,13 +158,15 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         tierLabel: selectedTier.label,
         startDate: startDate.toISOString(),
         endDate: end.toISOString(),
-        customerName: name,
-        whatsappNumber: whatsapp,
+        customerName: name.trim(),
+        whatsappNumber: whatsapp.trim(),
         deliveryArea: area.value,
+        address: address.trim(),
+        paymentMethod: paymentMethod,
+        sourceInfo: sourceInfo.value,
         jaminan: jaminan.value,
         socialMediaType: socialMediaType.value,
         socialMediaUsername: socialMediaUsername,
-        // fullAddress: address,
         totalPrice: grandTotal,
         addonTv: selectedAddon,
         tvCatalogId: selectedAddon && tvAddon ? tvAddon.id : null,
@@ -175,11 +190,12 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
         setName("");
         setWhatsapp("");
         setArea(null);
+        setAddress("");
+        setPaymentMethod("TRANSFER");
+        setSourceInfo(null);
         setJaminan(null);
         setSocialMediaType(null);
         setSocialMediaUsername("");
-
-        // setAddress("");
 
         Swal.fire({
           icon: "success",
@@ -566,20 +582,101 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                   isSearchable
                 />
               </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-surface-on">
+                  Dapat Info Dari Mana?
+                </label>
+                <Select
+                  instanceId="source-info-select"
+                  options={sourceOptions}
+                  value={sourceInfo}
+                  onChange={(opt) => setSourceInfo(opt)}
+                  placeholder="Pilih Sumber Informasi..."
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
             </div>
 
-            {/* <div className="flex flex-col gap-2">
+            {/* Detail Alamat & Blok */}
+            <div className="flex flex-col gap-2">
               <label className="text-sm font-bold text-surface-on">
-                Detail Alamat Lengkap
+                Detail Alamat
               </label>
               <textarea
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows="3"
-                placeholder="Masukkan Nama Jalan, No Rumah, RT/RW, dan Patokan (Contoh: Samping Masjid Al-Ikhlas)"
-                className="w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 focus:ring-primary/50 border border-transparent focus:border-primary resize-none"
+                placeholder="Masukkan Nama Jalan, No. Rumah, Blok, RT/RW, dan Patokan (Contoh: Jl. Anggrek No. 12 Blok B3 RT 02/05, Samping Masjid Al-Ikhlas)"
+                className={`w-full bg-surface-container px-4 py-3 rounded-xl text-surface-on placeholder:text-surface-on/40 focus:outline-none focus:ring-2 border resize-none ${
+                  address && address.trim().length < 5
+                    ? "border-2 border-red-500 focus:ring-red-500"
+                    : "border-transparent focus:ring-primary/50 focus:border-primary"
+                }`}
               ></textarea>
-            </div> */}
+              {address && address.trim().length < 5 && (
+                <span className="text-xs text-red-500 font-bold">
+                  Mohon isi detail alamat dan blok secara lengkap (minimal 5 karakter)
+                </span>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 6: Metode Pembayaran */}
+        <section>
+          <h3 className="flex items-center gap-2 text-xl font-bold text-surface-on mb-4">
+            <FaMoneyBillWave className="text-primary w-8 h-8" />
+            Metode Pembayaran
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Opsi Transfer */}
+            <div
+              onClick={() => setPaymentMethod("TRANSFER")}
+              className={`p-5 rounded-2xl cursor-pointer transition-all border-2 flex items-start gap-4 ${
+                paymentMethod === "TRANSFER"
+                  ? "border-primary bg-primary-fixed/15 shadow-ambient-blue"
+                  : "border-outline-variant/20 bg-surface-container-lowest hover:border-primary/50"
+              }`}
+            >
+              <div className={`p-3 rounded-xl ${paymentMethod === "TRANSFER" ? "bg-primary text-white" : "bg-surface-container text-surface-on"}`}>
+                <FaCreditCard className="w-6 h-6" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-surface-on text-base">Transfer Bank</h4>
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "TRANSFER" ? "border-primary" : "border-outline-variant"}`}>
+                    {paymentMethod === "TRANSFER" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Opsi Cash */}
+            <div
+              onClick={() => setPaymentMethod("CASH")}
+              className={`p-5 rounded-2xl cursor-pointer transition-all border-2 flex items-start gap-4 ${
+                paymentMethod === "CASH"
+                  ? "border-primary bg-primary-fixed/15 shadow-ambient-blue"
+                  : "border-outline-variant/20 bg-surface-container-lowest hover:border-primary/50"
+              }`}
+            >
+              <div className={`p-3 rounded-xl ${paymentMethod === "CASH" ? "bg-primary text-white" : "bg-surface-container text-surface-on"}`}>
+                <FaMoneyBillWave className="w-6 h-6" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-surface-on text-base">Cash (Bayar di Tempat)</h4>
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${paymentMethod === "CASH" ? "border-primary" : "border-outline-variant"}`}>
+                    {paymentMethod === "CASH" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                  </div>
+                </div>
+                <p className="text-xs text-surface-on/60 mt-1">
+                  Bayar tunai langsung saat unit tiba di lokasi
+                </p>
+              </div>
+            </div>
           </div>
         </section>
       </div>
@@ -633,6 +730,13 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
                 {selectedAddon ? `+ ${formatRupiah(tvPrice)}` : "Belum dipilih"}
               </p>
             </div>
+
+            <div className="flex justify-between items-center text-sm pt-2 border-t border-outline-variant/10">
+              <p className="text-surface-on/60 text-xs">Metode Pembayaran</p>
+              <span className="text-xs font-bold text-primary bg-primary-fixed/20 px-2 py-0.5 rounded-md">
+                {paymentMethod === "CASH" ? "Cash (Bayar di Tempat)" : "Transfer Bank"}
+              </span>
+            </div>
           </div>
 
           <div className="flex justify-between items-center mb-2 border-b border-gray pb-4">
@@ -647,7 +751,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
           <button
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className="w-full bg-secondary-container text-secondary-on-container py-4 rounded-xl font-extrabold text-lg shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex justify-center items-center gap-2"
+            className="w-full bg-secondary-container text-secondary-on-container py-4 rounded-xl font-extrabold text-lg shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex justify-center items-center gap-2 cursor-pointer"
           >
             {isSubmitting ? (
               <>
@@ -661,7 +765,7 @@ export default function BookingForm({ initialConsoles, initialAddons }) {
 
           {!isFormValid && (
             <p className="text-center text-xs text-surface-on/60 mt-4">
-              Lengkapi pilihan paket, tanggal, dan form data diri untuk
+              Lengkapi pilihan paket, tanggal, alamat, dan data diri untuk
               melanjutkan.
             </p>
           )}
